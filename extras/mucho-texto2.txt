@@ -1,0 +1,942 @@
+# VISIÓN GENERAL DE LA GUÍA DE CREACIÓN DE PERSONAJES
+
+## Objetivo
+
+La guía de creación de personajes debe rediseñarse completamente para convertirse en una experiencia interactiva que combine una wiki, un libro digital y un asistente paso a paso.
+
+El objetivo principal es que un jugador completamente nuevo pueda terminar la guía diciendo
+
+Ya tengo mi personaje listo.
+
+La guía no debe sentirse como una lista de información ni como una página de documentación. Debe sentirse como un libro interactivo que acompaña al jugador durante todo el proceso de creación de personaje.
+
+---
+
+## Experiencia de Usuario
+
+Al ingresar a la sección de creación de personajes el usuario NO debe elegir una clase inmediatamente.
+
+En su lugar verá una portada similar a la portada de un libro.
+
+Elementos
+
+ Título principal.
+ Breve explicación de qué conseguirá al finalizar.
+ Imagen o ilustración temática.
+ Botón principal
+
+Empieza a crear un PJ
+
+Al pulsarlo comienza el recorrido guiado.
+
+---
+
+## Estilo Visual
+
+La experiencia debe sentirse como un libro abierto.
+
+Cada fase debe mostrarse como una página o capítulo.
+
+El usuario debe sentir que está avanzando por capítulos de una aventura.
+
+La navegación debe ser sencilla
+
+ Página anterior.
+ Página siguiente.
+ Índice de progreso.
+ Capítulo actual.
+
+---
+
+## Filosofía de Diseño
+
+La guía debe estar pensada tanto para jugadores nuevos como experimentados.
+
+Los jugadores nuevos deben entender qué hacer.
+
+Los jugadores veteranos deben poder avanzar rápidamente.
+
+Cada fase debe
+
+ Explicar.
+ Mostrar ejemplos.
+ Dar consejos.
+ Guiar la decisión.
+
+No debe saturar con texto excesivo.
+
+La profundidad debe ser media.
+
+Más completa que un tutorial básico.
+
+Más ligera que un manual completo.
+
+---
+
+## Estructura General
+
+Capítulo 1
+Bienvenida
+
+Capítulo 2
+¿Qué es D&D
+
+Capítulo 3
+Reglas importantes del servidor
+
+Capítulo 4
+Libros permitidos
+
+Capítulo 5
+Concepto del personaje
+
+Capítulo 6
+Raza
+
+Capítulo 7
+Clase
+
+Capítulo 8
+Atributos
+
+Capítulo 9
+Trasfondo
+
+Capítulo 10
+Equipo inicial
+
+Capítulo 11
+Resumen del personaje
+
+Capítulo 12
+Crear ficha en Nivel20
+
+Capítulo 13
+Matchmaking
+
+Capítulo 14
+Fin del recorrido
+
+---
+
+## Cambio de Comportamiento al Elegir Clase
+
+Hasta la fase de Clase la guía es común para todos.
+
+Una vez elegida la clase
+
+ El contenido posterior cambia.
+ Las recomendaciones cambian.
+ Los ejemplos cambian.
+ Los consejos cambian.
+
+Un mago no verá las mismas explicaciones que un guerrero.
+
+Un clérigo no verá las mismas explicaciones que un pícaro.
+
+Cada clase tendrá su propia versión de las fases posteriores.
+
+Esto debe generar una experiencia personalizada.
+
+---
+
+## Resultado Final
+
+Al finalizar la guía se mostrará un resumen visual del personaje.
+
+El resumen debe incluir
+
+ Nombre.
+ Raza.
+ Clase.
+ Atributos.
+ Trasfondo.
+ Equipo inicial.
+
+Luego se mostrará una explicación indicando que la ficha debe crearse en Nivel20 a nivel 1.
+
+Finalmente se invitará al jugador a utilizar el sistema de Matchmaking para encontrar grupo.
+
+# CAPÍTULO 1
+
+# BIENVENIDO A LA CREACIÓN DE PERSONAJES
+
+## Título
+
+Tu aventura comienza aquí
+
+## Texto Principal
+
+Bienvenido a la guía interactiva de creación de personajes.
+
+Si es tu primera vez jugando Dungeons & Dragons, no te preocupes. Esta guía te acompañará paso a paso para crear un personaje listo para vivir aventuras dentro de nuestro servidor.
+
+Si ya tienes experiencia, también podrás utilizar esta guía para revisar las reglas y crear un personaje compatible con nuestra comunidad.
+
+Al finalizar este recorrido tendrás una idea clara de quién es tu personaje, qué puede hacer y cómo comenzar a jugar.
+
+No necesitas conocer todas las reglas antes de empezar.
+
+Solo sigue los capítulos y toma las decisiones que mejor representen al héroe, villano o aventurero que deseas interpretar.
+
+## Consejo
+
+No pienses únicamente en números y habilidades.
+
+Los personajes más memorables suelen comenzar con una idea sencilla
+
+ Un caballero que busca recuperar su honor.
+ Una maga obsesionada con descubrir secretos antiguos.
+ Un explorador que nunca ha visto una ciudad.
+ Un mercenario que intenta dejar atrás su pasado.
+
+Tu personaje es mucho más que una hoja de estadísticas.
+
+## Botón
+
+Comenzar Capítulo
+
+# CAPÍTULO 2
+
+# ¿QUÉ ES D&D
+
+## Título
+
+Antes de crear tu personaje
+
+## Texto Principal
+
+Dungeons & Dragons es un juego de rol cooperativo.
+
+Cada jugador controla un personaje dentro de un mundo fantástico mientras un Director de Juego (DM) describe el escenario, interpreta personajes y presenta desafíos.
+
+A diferencia de un videojuego, aquí casi cualquier acción puede intentarse.
+
+Puedes negociar con un rey.
+
+Explorar ruinas olvidadas.
+
+Investigar un asesinato.
+
+Enfrentarte a dragones.
+
+Fundar una organización.
+
+O simplemente sobrevivir a una taberna llena de problemas.
+
+Las reglas existen para ayudar a resolver acciones inciertas, pero la historia siempre es el centro de la experiencia.
+
+## ¿Qué es un Personaje
+
+Tu personaje es tu representación dentro del mundo.
+
+Tendrá
+
+ Una raza.
+ Una clase.
+ Un trasfondo.
+ Habilidades.
+ Objetivos.
+ Virtudes.
+ Defectos.
+
+A medida que juegues, crecerá, cambiará y desarrollará su propia historia.
+
+## ¿Qué es una Clase
+
+La clase define cómo afrontas los desafíos.
+
+Algunas clases destacan en combate.
+
+Otras utilizan magia.
+
+Otras sobreviven gracias a la astucia, la exploración o el apoyo a sus aliados.
+
+Más adelante elegirás una clase y la guía se adaptará para ayudarte con las decisiones específicas de ella.
+
+## ¿Qué es una Raza
+
+La raza representa el origen biológico o cultural de tu personaje.
+
+Cada raza posee características únicas que pueden influir en su historia y habilidades.
+
+En nuestro servidor encontrarás tanto opciones oficiales como opciones adicionales provenientes de los libros permitidos.
+
+## ¿Qué es un Trasfondo
+
+El trasfondo describe quién eras antes de convertirte en aventurero.
+
+Es una de las herramientas más importantes para construir una personalidad interesante.
+
+No determina tu futuro.
+
+Explica tu pasado.
+
+## Consejo
+
+No intentes crear el personaje más poderoso.
+
+Intenta crear un personaje que te resulte divertido interpretar durante muchas sesiones.
+
+Los personajes interesantes suelen generar las mejores historias.
+
+## Botón
+
+Continuar al siguiente capítulo
+
+# CAPÍTULO 3
+
+# REGLAS IMPORTANTES DEL SERVIDOR
+
+## Título
+
+Antes de continuar
+
+## Texto Principal
+
+Antes de crear tu personaje es importante conocer las reglas y limitaciones utilizadas por nuestra comunidad.
+
+Esto garantiza que todos los jugadores creen personajes compatibles con el mismo entorno de juego y evita problemas durante futuras campañas.
+
+Las reglas del servidor tienen prioridad sobre cualquier contenido externo.
+
+Si alguna opción aparece en un libro pero contradice una norma del servidor, prevalecerá la regla establecida por la administración.
+
+## Lo que debes revisar
+
+Durante tu creación de personaje deberás prestar especial atención a
+
+ Libros permitidos.
+ Razas permitidas.
+ Clases permitidas.
+ Reglas de creación.
+ Restricciones especiales.
+ Normas de convivencia.
+
+Toda esta información se encuentra explicada en los capítulos siguientes.
+
+## Consejo
+
+No asumas que todas las opciones oficiales están disponibles automáticamente.
+
+Siempre revisa las reglas y contenido aprobado antes de tomar una decisión importante para tu personaje.
+
+## Nota para el Sistema
+
+Esta página debe ser completamente editable desde el panel de administración.
+
+Los administradores deben poder
+
+ Cambiar el texto.
+ Añadir avisos.
+ Añadir restricciones.
+ Añadir imágenes.
+ Crear subsecciones.
+
+Sin necesidad de modificar código.
+
+## Botón
+
+Ver libros permitidos
+
+# CAPÍTULO 3
+
+# REGLAS IMPORTANTES DEL SERVIDOR
+
+## Título
+
+Antes de continuar
+
+## Texto Principal
+
+Antes de crear tu personaje es importante conocer las reglas y limitaciones utilizadas por nuestra comunidad.
+
+Esto garantiza que todos los jugadores creen personajes compatibles con el mismo entorno de juego y evita problemas durante futuras campañas.
+
+Las reglas del servidor tienen prioridad sobre cualquier contenido externo.
+
+Si alguna opción aparece en un libro pero contradice una norma del servidor, prevalecerá la regla establecida por la administración.
+
+## Lo que debes revisar
+
+Durante tu creación de personaje deberás prestar especial atención a
+
+ Libros permitidos.
+ Razas permitidas.
+ Clases permitidas.
+ Reglas de creación.
+ Restricciones especiales.
+ Normas de convivencia.
+
+Toda esta información se encuentra explicada en los capítulos siguientes.
+
+## Consejo
+
+No asumas que todas las opciones oficiales están disponibles automáticamente.
+
+Siempre revisa las reglas y contenido aprobado antes de tomar una decisión importante para tu personaje.
+
+## Nota para el Sistema
+
+Esta página debe ser completamente editable desde el panel de administración.
+
+Los administradores deben poder
+
+ Cambiar el texto.
+ Añadir avisos.
+ Añadir restricciones.
+ Añadir imágenes.
+ Crear subsecciones.
+
+Sin necesidad de modificar código.
+
+## Botón
+
+Ver libros permitidos
+
+# MEJORA DEL CAPÍTULO 4
+
+# LIBROS PERMITIDOS
+
+## Filosofía
+
+Esta sección NO debe limitarse a mostrar enlaces.
+
+El objetivo es que un jugador nuevo entienda qué tipo de contenido encontrará en cada libro.
+
+Muchos jugadores ven una lista enorme de libros y no saben por dónde empezar.
+
+La guía debe resolver ese problema.
+
+---
+
+## Manual del Jugador
+
+### ¿Qué encontrarás aquí
+
+Este es el libro principal de Dungeons & Dragons.
+
+Si eres nuevo, aquí se encuentra la mayoría de la información básica que necesitarás para crear tu primer personaje.
+
+Contiene
+
+ Clases básicas.
+ Razas clásicas.
+ Equipo.
+ Conjuros.
+ Reglas generales.
+
+### Recomendación
+
+Todo jugador debería familiarizarse con este libro.
+
+---
+
+## Guía de Xanathar para Todo
+
+### ¿Qué encontrarás aquí
+
+Amplía enormemente las opciones disponibles.
+
+Contiene
+
+ Nuevas subclases.
+ Nuevos conjuros.
+ Herramientas para personalizar personajes.
+ Opciones adicionales para jugadores.
+
+### Recomendación
+
+Muy recomendable para jugadores que ya tienen una idea clara de su personaje.
+
+---
+
+## Caldero de Tasha para Todo
+
+### ¿Qué encontrarás aquí
+
+Uno de los libros de personalización más importantes.
+
+Incluye
+
+ Nuevas subclases.
+ Opciones de personalización.
+ Nuevos conjuros.
+ Reglas opcionales.
+
+### Recomendación
+
+Ideal para crear personajes únicos.
+
+---
+
+## Guía del Aventurero de la Costa de la Espada
+
+### ¿Qué encontrarás aquí
+
+Opciones relacionadas con los Reinos Olvidados.
+
+Incluye
+
+ Razas.
+ Subclases.
+ Información de ambientación.
+
+---
+
+## Tesorería de Dragones de Fizban
+
+### ¿Qué encontrarás aquí
+
+Contenido centrado en dragones.
+
+Incluye
+
+ Opciones temáticas.
+ Subclases.
+ Información sobre dragones.
+
+---
+
+## Monstruos del Multiverso
+
+### ¿Qué encontrarás aquí
+
+Una gran colección de razas jugables.
+
+Si buscas opciones exóticas, probablemente las encuentres aquí.
+
+---
+
+## Guía de Van Richten para Ravenloft
+
+### ¿Qué encontrarás aquí
+
+Contenido oscuro y gótico.
+
+Perfecto para personajes relacionados con horror, maldiciones y misterio.
+
+---
+
+## Diario del Explorador La Isla de las Células Muertas
+
+### ¿Qué encontrarás aquí
+
+Contenido especial aprobado por el servidor.
+
+Explora nuevas posibilidades para personajes y campañas.
+
+---
+
+## Dracomicon
+
+### ¿Qué encontrarás aquí
+
+Contenido adicional relacionado con dragones y sus variantes.
+
+---
+
+## Insectoides
+
+### ¿Qué encontrarás aquí
+
+Nuevas razas y opciones inspiradas en criaturas insectoides.
+
+---
+
+## El Púgil
+
+### ¿Qué encontrarás aquí
+
+Una nueva clase enfocada en combate cuerpo a cuerpo utilizando puños, técnica y disciplina.
+
+---
+
+## Steinhardt's Guide to the Eldritch Hunt
+
+### ¿Qué encontrarás aquí
+
+Contenido oscuro inspirado en horror cósmico.
+
+Incluye nuevas opciones para jugadores que buscan conceptos más extraños o sobrenaturales.
+
+---
+
+## Consejo Final
+
+No necesitas leer todos los libros.
+
+La guía te mostrará las opciones disponibles cuando llegues a cada decisión.
+
+Puedes regresar más adelante para explorar nuevas posibilidades.
+
+
+# CAPÍTULO 5
+
+# CONCEPTO DEL PERSONAJE
+
+## Título
+
+¿Quién quieres ser
+
+## Texto Principal
+
+Antes de elegir números, habilidades o equipo, piensa en la persona que quieres interpretar.
+
+Un buen personaje suele comenzar con una idea sencilla.
+
+No necesitas una historia de veinte páginas.
+
+Una sola frase puede ser suficiente.
+
+Ejemplos
+
+ Un soldado que busca redimirse.
+ Una exploradora obsesionada con los mapas.
+ Un noble exiliado.
+ Un aprendiz de mago que busca conocimiento.
+ Un cazador de monstruos.
+ Un mercader convertido en aventurero.
+
+## Preguntas para inspirarte
+
+¿De dónde viene tu personaje
+
+¿Qué desea conseguir
+
+¿Qué teme perder
+
+¿Por qué se convirtió en aventurero
+
+¿Qué lo diferencia de los demás
+
+## Objetivo de esta Fase
+
+Al finalizar deberías tener una idea general de
+
+ Personalidad.
+ Motivaciones.
+ Objetivos.
+ Estilo de juego deseado.
+
+## Consejo
+
+No construyas primero la ficha.
+
+Construye primero la persona.
+
+Las mejores historias nacen de personajes interesantes, no de estadísticas perfectas.
+
+## Acción
+
+Guardar concepto del personaje.
+
+## Botón
+
+Elegir raza
+
+# CAPÍTULO 6
+
+# ELECCIÓN DE RAZA
+
+## Título
+
+Tu origen
+
+## Texto Principal
+
+La raza representa el origen biológico, cultural o fantástico de tu personaje.
+
+Cada raza posee características únicas que pueden influir en su historia y capacidades.
+
+Dentro de nuestro servidor encontrarás tanto opciones oficiales como contenido adicional aprobado.
+
+La disponibilidad dependerá de los libros permitidos.
+
+## ¿Cómo elegir una raza
+
+Piensa primero en tu concepto.
+
+Pregúntate
+
+ ¿Dónde nació
+ ¿Cómo fue criado
+ ¿Qué cultura lo influenció
+ ¿Cómo ve el mundo
+
+Después observa qué razas encajan mejor con esa idea.
+
+## Importante
+
+No elijas únicamente por ventajas mecánicas.
+
+Una raza interesante puede enriquecer enormemente la historia de tu personaje.
+
+## Presentación de Razas
+
+Esta sección debe generarse automáticamente desde el sistema administrativo.
+
+Cada raza debe poder incluir
+
+ Nombre.
+ Imagen.
+ Descripción.
+ Rasgos.
+ Libro de origen.
+ Estado (activo o inactivo).
+
+Los administradores deben poder
+
+ Crear nuevas razas.
+ Editarlas.
+ Desactivarlas.
+ Reordenarlas.
+
+Sin modificar código.
+
+## Acción
+
+Seleccionar una raza.
+
+## Resultado
+
+La elección se guardará para las fases posteriores.
+
+## Botón
+
+Elegir clase
+
+
+
+# CAPÍTULO 7
+
+# ELECCIÓN DE CLASE
+
+## Cambio de Experiencia
+
+Este es el punto donde la guía deja de ser completamente general y comienza a personalizarse según las decisiones del jugador.
+
+La elección de clase es una de las decisiones más importantes de todo el proceso de creación.
+
+A partir de aquí las explicaciones, ejemplos, recomendaciones y consejos cambiarán según la clase seleccionada.
+
+---
+
+## Presentación de Clases
+
+Las clases deben mostrarse mediante tarjetas visuales.
+
+Cada tarjeta debe incluir
+
+ Nombre.
+ Imagen.
+ Rol principal.
+ Dificultad.
+ Descripción breve.
+
+Ejemplo
+
+Guerrero
+Especialista en combate físico.
+
+Mago
+Maestro de la magia arcana.
+
+Pícaro
+Experto en sigilo y precisión.
+
+Púgil
+Combatiente especializado en puños y resistencia física.
+
+Jaeger
+Cazador de monstruos especializado en amenazas sobrenaturales.
+
+---
+
+## Filtro Opcional
+
+El usuario puede filtrar clases por
+
+ Combate físico.
+ Magia.
+ Apoyo.
+ Exploración.
+ Principiante.
+ Avanzado.
+
+---
+
+## Al Seleccionar una Clase
+
+La guía debe guardar automáticamente
+
+ Clase elegida.
+ Rol.
+ Estilo de juego.
+
+Y adaptar el resto del recorrido.
+
+---
+
+## Clases Iniciales
+
+Oficiales
+
+ Bárbaro
+ Bardo
+ Brujo
+ Clérigo
+ Druida
+ Explorador
+ Guerrero
+ Hechicero
+ Mago
+ Monje
+ Paladín
+ Pícaro
+ Artífice
+
+Homebrew
+
+ Púgil
+ Jaeger
+
+---
+
+## Sistema Dinámico
+
+Las clases NO deben estar programadas manualmente.
+
+El administrador debe poder
+
+ Crear clases.
+ Editar clases.
+ Eliminar clases.
+ Desactivar clases.
+ Reordenar clases.
+
+Sin tocar código.
+
+Las nuevas clases deben aparecer automáticamente en la guía.
+
+## Botón
+
+Continuar
+
+# CAPÍTULO 8
+
+# RECOMENDACIONES SEGÚN TU CLASE
+
+## Objetivo
+
+Una vez elegida una clase, la guía debe mostrar una página personalizada para ayudar al jugador a entender qué está eligiendo.
+
+Esta página debe generarse automáticamente a partir de la información configurada en el panel administrativo.
+
+---
+
+## Información Mostrada
+
+### Descripción
+
+Explicación sencilla de la clase.
+
+### Rol Principal
+
+Ejemplos
+
+ Tanque.
+ Daño.
+ Apoyo.
+ Control.
+ Exploración.
+
+### Dificultad
+
+ Fácil.
+ Media.
+ Difícil.
+
+### Atributos Recomendados
+
+Mostrar cuáles suelen ser los atributos más importantes.
+
+Ejemplo
+
+Mago
+
+ Inteligencia.
+ Constitución.
+ Destreza.
+
+Guerrero
+
+ Fuerza.
+ Constitución.
+
+Pícaro
+
+ Destreza.
+ Carisma.
+
+### Ventajas
+
+¿Qué hace bien esta clase
+
+### Debilidades
+
+¿Qué dificultades suele tener
+
+### Estilo de Juego
+
+¿Cómo suele jugarse esta clase durante una aventura
+
+### Consejo para Nuevos Jugadores
+
+Pequeña recomendación para evitar errores comunes.
+
+---
+
+## Nota
+
+Toda esta información debe provenir del sistema administrativo.
+
+El administrador debe poder modificar cualquier dato sin tocar código.
+
+# VISIÓN FINAL DEL SISTEMA
+
+Cuando un jugador complete la guía deberá sentir que acaba de terminar un pequeño libro interactivo.
+
+Flujo final
+
+Bienvenida
+↓
+¿Qué es D&D
+↓
+Reglas del servidor
+↓
+Libros permitidos
+↓
+Concepto del personaje
+↓
+Raza
+↓
+Clase
+↓
+Guía personalizada según clase
+↓
+Atributos
+↓
+Trasfondo
+↓
+Equipo inicial
+↓
+Resumen final
+↓
+Crear ficha en Nivel20 (Nivel 1)
+↓
+Buscar grupo mediante Matchmaking
+
+El objetivo final es que el jugador termine el recorrido pensando
+
+Ya sé qué personaje voy a jugar y estoy listo para empezar mi aventura.

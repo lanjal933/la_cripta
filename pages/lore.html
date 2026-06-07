@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lore - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body text-platinum-white min-h-screen">
+    <div id="flashOverlay" class="flash-overlay"></div>
+    <div class="fixed inset-0 -z-10" style="background-image: url('../images/lore_pc.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;"></div>
+    <div class="fixed inset-0 -z-10 bg-gradient-to-b from-shadow-graphite/95 via-shadow-graphite/90 to-shadow-graphite/95"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-umbra/90 backdrop-blur-sm border-b border-neon-violet/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <a href="index.html" class="font-title text-2xl text-neon-violet hover:text-violet-400 transition-colors">LA CRIPTA</a>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="mapa.html" class="nav-link text-sm uppercase tracking-wider">Mapa</a>
+                    <a href="facciones.html" class="nav-link text-sm uppercase tracking-wider">Facciones</a>
+                    <a href="ciudades.html" class="nav-link text-sm uppercase tracking-wider">Ciudades</a>
+                    <a href="lore.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet">Lore</a>
+                    <a href="matchmaking.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet font-bold">Matchmaking</a>
+                    <a href="destino.html" class="nav-link text-sm uppercase tracking-wider">Destino</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Lore Section -->
+    <section class="px-4 py-16 max-w-4xl mx-auto pt-32 relative min-h-screen">
+        <div class="relative z-10 w-full">
+            <h2 class="font-title text-4xl md:text-5xl text-center mb-12 text-neon-violet">LORE</h2>
+            <div class="relative max-w-4xl mx-auto">
+                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-neon-violet/30"></div>
+                <div class="space-y-12" id="timelineContainer">
+                    <!-- Las eras se cargarán dinámicamente aquí -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let loreCounter = 3;
+
+        function showLore(index) {
+            for (let i = 0; i < loreCounter; i++) {
+                const content = document.getElementById(`loreContent${i}`);
+                if (content) {
+                    if (i === index) {
+                        content.classList.remove('hidden');
+                        content.classList.add('fade-in');
+                    } else {
+                        content.classList.add('hidden');
+                        content.classList.remove('fade-in');
+                    }
+                }
+            }
+        }
+
+        function enc(d){
+            return btoa(unescape(encodeURIComponent(d)));
+        }
+        function dec(d){
+            return decodeURIComponent(escape(atob(d)));
+        }
+
+        function parseMarkdown(text){
+            let html=text;
+            html=html.replace(/^>\s*(.+)$/gm,'<h3 class="font-title text-xl text-neon-violet mb-2">$1</h3>');
+            html=html.replace(/^# (.+)$/gm,'<h3 class="font-title text-xl text-neon-violet mb-2">$1</h3>');
+            html=html.replace(/^## (.+)$/gm,'<h4 class="font-title text-lg text-neon-violet mb-2">$1</h4>');
+            html=html.replace(/^-\s*(.+)$/gm,'<li class="text-gray-300 ml-4">$1</li>');
+            html=html.replace(/\*\*(.+?)\*\*/g,'<strong class="text-white font-bold">$1</strong>');
+            html=html.replace(/\*(.+?)\*/g,'<em class="text-gray-300 italic">$1</em>');
+            html=html.replace(/`([^`]+)`/g,'<code class="bg-gray-800 text-neon-violet px-2 py-1 rounded text-sm">$1</code>');
+            html=html.replace(/#([0-9a-fA-F]{6})(.+?)(?=#|$)/g,'<span style="color:#$1">$2</span>');
+            html=html.replace(/\n/g,'<br>');
+            return html;
+        }
+
+        function loadLoreSections() {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+
+            loreCounter = parseInt(localStorage.getItem('admin_lore_counter')) || 3;
+
+            for (let i = 0; i < loreCounter; i++) {
+                const sectionId = `lore${i}`;
+                const savedName = localStorage.getItem(`admin_${sectionId}_name`) || `Era ${i + 1}`;
+                const savedContent = localStorage.getItem(`admin_${sectionId}`);
+
+                const timelineHTML = `
+                    <div class="relative flex items-center">
+                        <div class="w-1/2 pr-8 text-right">
+                            <h3 class="font-title text-xl text-neon-violet">${savedName}</h3>
+                        </div>
+                        <div onclick="showLore(${i})" class="timeline-node absolute left-1/2 transform -translate-x-1/2 w-8 h-8 bg-neon-violet rounded-full cursor-pointer border-4 border-dark-umbra"></div>
+                        <div class="w-1/2 pl-8"></div>
+                    </div>
+                    <div id="loreContent${i}" class="hidden bg-dark-umbra/90 p-6 rounded-lg fade-in ml-16 backdrop-blur-sm">
+                        <img src="../images/era${i + 1}.jpg" alt="${savedName}" class="w-full h-32 object-cover rounded mb-4" onerror="this.style.display='none'">
+                        ${savedContent ? parseMarkdown(dec(savedContent)) : '<p>[INSERTA EVENTO HISTORICO AQUI - Max 2 oraciones]</p>'}
+                    </div>
+                `;
+                container.innerHTML += timelineHTML;
+            }
+        }
+
+        const K='benjamarcepau9';
+
+        document.addEventListener('keydown',function(e){
+            if(e.ctrlKey&&e.altKey&&e.key==='p'){
+                window.location.href='admin.html';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded',function(){
+            loadLoreSections();
+        });
+    </script>
+    <script src="../js/user-menu.js"></script>
+</body>
+</html>

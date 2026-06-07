@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventuras - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body text-platinum-white min-h-screen bg-shadow-graphite">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-umbra/90 backdrop-blur-sm border-b border-neon-violet/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <a href="index.html" class="font-title text-2xl text-neon-violet hover:text-violet-400 transition-colors">LA CRIPTA</a>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="mapa.html" class="nav-link text-sm uppercase tracking-wider">Mapa</a>
+                    <a href="facciones.html" class="nav-link text-sm uppercase tracking-wider">Facciones</a>
+                    <a href="ciudades.html" class="nav-link text-sm uppercase tracking-wider">Ciudades</a>
+                    <a href="lore.html" class="nav-link text-sm uppercase tracking-wider">Lore</a>
+                    <a href="aventuras.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet font-bold">Aventuras</a>
+                    <a href="matchmaking.html" class="nav-link text-sm uppercase tracking-wider">Matchmaking</a>
+                    <a href="destino.html" class="nav-link text-sm uppercase tracking-wider">Destino</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="font-title text-5xl md:text-6xl text-neon-violet mb-4">Aventuras</h1>
+                <p class="text-gray-400 text-lg">Explora aventuras creadas por la comunidad o crea las tuyas propias</p>
+            </div>
+
+            <!-- Create Adventure Button -->
+            <div class="flex justify-center mb-8">
+                <button id="createAdventureBtn" class="bg-neon-violet hover:bg-violet-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-violet-glow">
+                    + Crear Nueva Aventura
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-dark-umbra/90 p-6 rounded-lg mb-8 border border-neon-violet/30">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Buscar</label>
+                        <input type="text" id="searchInput" placeholder="Título, descripción o tags..." class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Tipo de Aventura</label>
+                        <select id="adventureTypeFilter" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                            <option value="">Todos</option>
+                            <option value="solo">Solo</option>
+                            <option value="cooperative">Cooperativa</option>
+                            <option value="narrative">Narrativa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Nivel Recomendado</label>
+                        <select id="levelFilter" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                            <option value="">Todos</option>
+                            <option value="1">Nivel 1-5</option>
+                            <option value="6">Nivel 6-10</option>
+                            <option value="11">Nivel 11-15</option>
+                            <option value="16">Nivel 16-20</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Ordenar por</label>
+                        <select id="sortBy" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                            <option value="newest">Más recientes</option>
+                            <option value="popular">Más populares</option>
+                            <option value="rating">Mejor valoradas</option>
+                            <option value="official">Oficiales primero</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <label class="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+                        <input type="checkbox" id="officialOnly" class="w-4 h-4 accent-neon-violet">
+                        Solo oficiales
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+                        <input type="checkbox" id="communityOnly" class="w-4 h-4 accent-neon-violet">
+                        Solo comunidad
+                    </label>
+                </div>
+            </div>
+
+            <!-- Official Adventures Section -->
+            <div id="officialSection" class="mb-12 hidden">
+                <h2 class="font-title text-3xl text-neon-violet mb-6 flex items-center gap-3">
+                    <span class="bg-neon-violet text-white px-3 py-1 rounded text-sm">OFICIAL</span>
+                    Aventuras Oficiales
+                </h2>
+                <div id="officialAdventures" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Official adventures will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Community Adventures Section -->
+            <div>
+                <h2 class="font-title text-3xl text-neon-violet mb-6">Aventuras de la Comunidad</h2>
+                <div id="adventuresGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Adventures will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="flex justify-center gap-4 mt-8">
+                <!-- Pagination buttons will be loaded here -->
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-12 hidden">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-violet mx-auto"></div>
+                <p class="text-gray-400 mt-4">Cargando aventuras...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="text-center py-12 hidden">
+                <p class="text-gray-400 text-lg">No se encontraron aventuras</p>
+                <p class="text-gray-500 mt-2">Sé el primero en crear una aventura increíble</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Adventure Modal -->
+    <div id="createAdventureModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-umbra border border-neon-violet/30 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-title text-2xl text-neon-violet">Crear Nueva Aventura</h2>
+                    <button id="closeModalBtn" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                </div>
+
+                <form id="adventureForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Título *</label>
+                        <input type="text" id="adventureTitle" required class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="El título de tu aventura">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Descripción *</label>
+                        <textarea id="adventureDescription" required rows="4" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Describe tu aventura..."></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Categoría *</label>
+                            <select id="adventureCategory" required class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                                <option value="">Seleccionar</option>
+                                <option value="Fantasy">Fantasía</option>
+                                <option value="Horror">Horror</option>
+                                <option value="Mystery">Misterio</option>
+                                <option value="Sci-Fi">Ciencia Ficción</option>
+                                <option value="Historical">Histórica</option>
+                                <option value="Custom">Personalizada</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Tipo de Aventura *</label>
+                            <select id="adventureType" required class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                                <option value="">Seleccionar</option>
+                                <option value="solo">Solo Aventura</option>
+                                <option value="cooperative">Cooperativa</option>
+                                <option value="narrative">Narrativa</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Nivel Recomendado *</label>
+                            <input type="number" id="adventureLevel" required min="1" max="20" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="1-20">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Jugadores Recomendados *</label>
+                            <input type="number" id="adventurePlayers" required min="1" max="10" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="1-10">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Imagen de Portada (URL opcional)</label>
+                        <input type="url" id="adventureCoverImage" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="https://...">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Tags (separados por coma)</label>
+                        <input type="text" id="adventureTags" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="acción, misterio, exploración">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Recompensas (una por línea)</label>
+                        <textarea id="adventureRewards" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Oro, experiencia, objetos especiales..."></textarea>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit" class="flex-1 bg-neon-violet hover:bg-violet-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Crear Aventura
+                        </button>
+                        <button type="button" id="cancelBtn" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-config.js"></script>
+    <script src="../js/user-menu.js"></script>
+    <script src="../js/adventures.js"></script>
+</body>
+</html>

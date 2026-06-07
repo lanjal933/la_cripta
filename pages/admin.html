@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Gestión de Secciones</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #dcddde;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: #2f3136;
+            padding: 20px;
+            border-bottom: 2px solid #8b0000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h1 {
+            color: #8b0000;
+            font-size: 24px;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-nav button {
+            background: #40444b;
+            color: #dcddde;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .admin-nav button:hover {
+            background: #4f545c;
+        }
+
+        .admin-nav button.active {
+            background: #8b0000;
+            color: white;
+        }
+
+        .admin-container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .admin-sidebar {
+            width: 300px;
+            background: #2f3136;
+            padding: 20px;
+            border-right: 1px solid #202225;
+            overflow-y: auto;
+        }
+
+        .section-group {
+            margin-bottom: 24px;
+        }
+
+        .section-group h3 {
+            color: #8b0000;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-group h3 button {
+            background: #5865F2;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .section-list {
+            list-style: none;
+        }
+
+        .section-item {
+            background: #40444b;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-item:hover {
+            background: #4f545c;
+        }
+
+        .section-item.active {
+            background: #8b0000;
+            color: white;
+        }
+
+        .section-item .delete-btn {
+            background: #ed4245;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .section-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .editor-container {
+            background: #2f3136;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .editor-header h2 {
+            color: #ffffff;
+            font-size: 20px;
+        }
+
+        .editor-header input {
+            background: #40444b;
+            border: 1px solid #202225;
+            color: #dcddde;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            min-height: 300px;
+            background: #40444b;
+            border: 1px solid #202225;
+            border-radius: 4px;
+            padding: 16px;
+            color: #dcddde;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            resize: vertical;
+            outline: none;
+        }
+
+        .editor-textarea:focus {
+            border-color: #8b0000;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .editor-actions button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+        }
+
+        .delete-btn {
+            background: #ed4245;
+            color: white;
+            font-size: 12px;
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #c93b3e;
+        }
+
+        .duplicate-btn {
+            background: #faa61a;
+            color: white;
+            font-size: 12px;
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .duplicate-btn:hover {
+            background: #d98b16;
+        }
+
+        .save-btn {
+            background: #3ba55c;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: #2d7a46;
+        }
+
+        .cancel-btn {
+            background: #ed4245;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background: #c93b3e;
+        }
+
+        .preview-container {
+            background: #2f3136;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .preview-container h3 {
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .preview-content {
+            background: #40444b;
+            padding: 16px;
+            border-radius: 4px;
+            min-height: 100px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #2f3136;
+            padding: 24px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+        }
+
+        .modal h3 {
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .modal input {
+            width: 100%;
+            background: #40444b;
+            border: 1px solid #202225;
+            color: #dcddde;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-actions button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+        }
+
+        .modal-actions .confirm {
+            background: #3ba55c;
+            color: white;
+        }
+
+        .modal-actions .cancel {
+            background: #ed4245;
+            color: white;
+        }
+
+        .syntax-help {
+            background: #40444b;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 16px;
+            font-size: 12px;
+        }
+
+        .syntax-help h4 {
+            color: #8b0000;
+            margin-bottom: 8px;
+        }
+
+        .syntax-help ul {
+            color: #b9bbbe;
+            padding-left: 20px;
+        }
+
+        .syntax-help code {
+            background: #202225;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #5865F2;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>Panel Admin - Gestión de Secciones</h1>
+        <div class="admin-nav">
+            <button onclick="goToPage('index')">Inicio</button>
+            <button onclick="goToPage('mapa')">Mapa</button>
+            <button onclick="goToPage('facciones')">Facciones</button>
+            <button onclick="goToPage('ciudades')">Ciudades</button>
+            <button onclick="goToPage('lore')">Lore</button>
+            <button onclick="goToPage('destino')">Destino</button>
+            <button onclick="goToPage('admin-guia')" class="text-yellow-500">Admin Guía</button>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-sidebar">
+            <div class="section-group">
+                <h3>
+                    Lore (Eras)
+                    <button onclick="openNewSectionModal('lore')">+ Nueva Era</button>
+                </h3>
+                <ul class="section-list" id="loreList">
+                    <!-- Se cargará dinámicamente -->
+                </ul>
+            </div>
+
+            <div class="section-group">
+                <h3>
+                    Ciudades
+                    <button onclick="openNewSectionModal('city')">+ Nueva Ciudad</button>
+                </h3>
+                <ul class="section-list" id="cityList">
+                    <!-- Se cargará dinámicamente -->
+                </ul>
+            </div>
+
+            <div class="section-group">
+                <h3>
+                    Facciones
+                    <button onclick="openNewSectionModal('faction')">+ Nueva Facción</button>
+                </h3>
+                <ul class="section-list" id="factionList">
+                    <!-- Se cargará dinámicamente -->
+                </ul>
+            </div>
+
+            <div class="section-group">
+                <h3>
+                    Planos
+                    <button onclick="openNewSectionModal('plane')">+ Nuevo Plano</button>
+                </h3>
+                <ul class="section-list" id="planeList">
+                    <!-- Se cargará dinámicamente -->
+                </ul>
+            </div>
+
+            <div class="section-group">
+                <h3>
+                    Razas
+                    <button onclick="openNewRaceModal()">+ Nueva Raza</button>
+                </h3>
+                <ul class="section-list" id="raceList">
+                    <!-- Se cargará dinámicamente -->
+                </ul>
+            </div>
+
+            <div class="section-group">
+                <h3>
+                    Clases de Personajes
+                    <button onclick="openNewClassModal()">+ Nueva Clase</button>
+                </h3>
+                <ul class="section-list" id="classList">
+                    <!-- Se cargará dinámicamente -->
+                </ul>
+            </div>
+
+            <div class="section-group">
+                <h3>
+                    Capítulos de la Guía
+                    <button onclick="openNewChapterModal()">+ Nuevo Capítulo</button>
+                </h3>
+                <ul class="section-list" id="chapterList">
+                    <!-- Se cargará dinámicamente -->
+                </ul>
+            </div>
+
+            <div class="section-group">
+                <h3>
+                    Aventuras
+                    <button onclick="loadAdventures()">Recargar</button>
+                </h3>
+                <ul class="section-list" id="adventureList">
+                    <!-- Se cargará dinámicamente -->
+                </ul>
+            </div>
+        </div>
+
+        <div class="admin-main">
+            <div class="editor-container">
+                <div class="editor-header">
+                    <h2 id="editorTitle">Selecciona una sección para editar</h2>
+                    <input type="text" id="sectionNameInput" placeholder="Nombre de la sección" style="display: none;">
+                </div>
+                <textarea 
+                    id="contentEditor" 
+                    class="editor-textarea"
+                    placeholder="Selecciona una sección o crea una nueva..."
+                ></textarea>
+                <div class="syntax-help">
+                    <h4>Sintaxis Markdown:</h4>
+                    <ul>
+                        <li><code>> Título</code> - Título grande (header)</li>
+                        <li><code># Título</code> - Título grande</li>
+                        <li><code>## Subtítulo</code> - Subtítulo</li>
+                        <li><code>- Texto</code> - Bullet point</li>
+                        <li><code>**negrita**</code> - Texto en negrita</li>
+                        <li><code>*cursiva*</code> - Texto en cursiva</li>
+                        <li><code>`código`</code> - Código o etiquetas</li>
+                        <li><code>#RRGGBBtexto</code> - Texto en color</li>
+                    </ul>
+                </div>
+                <div class="editor-actions">
+                    <button class="save-btn" onclick="saveSection()">Guardar Cambios</button>
+                    <button class="cancel-btn" onclick="clearEditor()">Cancelar</button>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <h3>Preview</h3>
+                <div class="preview-content" id="previewContent">
+                    <p style="color: #72767d;">El preview aparecerá aquí...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para nueva sección -->
+    <div class="modal-overlay" id="newSectionModal">
+        <div class="modal">
+            <h3 id="modalTitle">Crear Nueva Sección</h3>
+            <input type="text" id="newSectionName" placeholder="Nombre de la sección">
+            <div class="modal-actions">
+                <button class="confirm" onclick="createNewSection()">Crear</button>
+                <button class="cancel" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para gestión de pasos de clase -->
+    <div class="modal-overlay" id="stepModal">
+        <div class="modal" style="width: 600px; max-width: 90%;">
+            <h3 id="stepModalTitle">Gestionar Paso</h3>
+            
+            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Título del Paso</label>
+                    <input type="text" id="stepTitle" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="Título del paso">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Descripción</label>
+                    <textarea id="stepDescription" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-24" placeholder="Descripción del paso"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Instrucciones (una por línea)</label>
+                    <textarea id="stepInstructions" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-24" placeholder="Instrucción 1&#10;Instrucción 2&#10;Instrucción 3"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">URL de Imagen (opcional)</label>
+                    <input type="text" id="stepImage" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="https://...">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">URL de Video (opcional)</label>
+                    <input type="text" id="stepVideo" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="https://...">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Enlaces (formato: Título|URL, uno por línea)</label>
+                    <textarea id="stepLinks" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-16" placeholder="Guía|https://...&#10;Tutorial|https://..."></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Notas (opcional)</label>
+                    <textarea id="stepNotes" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-16" placeholder="Notas adicionales..."></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Contenido Personalizado (opcional)</label>
+                    <textarea id="stepCustomContent" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-24" placeholder="Contenido HTML personalizado..."></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="confirm" onclick="saveStep()">Guardar Paso</button>
+                <button class="cancel" onclick="closeStepModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Race Modal -->
+    <div class="modal-overlay" id="raceModal">
+        <div class="modal" style="width: 600px; max-width: 90%;">
+            <h3 id="raceModalTitle">Gestionar Raza</h3>
+            
+            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">ID de la Raza</label>
+                    <input type="text" id="raceId" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="ej: human, elf, dwarf">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Nombre</label>
+                    <input type="text" id="raceName" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="Nombre de la raza">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Descripción</label>
+                    <textarea id="raceDescription" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-24" placeholder="Descripción de la raza"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Rasgos (uno por línea)</label>
+                    <textarea id="raceTraits" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-24" placeholder="Rasgo 1&#10;Rasgo 2&#10;Rasgo 3"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Libro de Origen</label>
+                    <input type="text" id="raceBook" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="ej: PHB, Volo's, Mordenkainen's">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Estado</label>
+                    <select id="raceActive" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded">
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="confirm" onclick="saveRace()">Guardar Raza</button>
+                <button class="cancel" onclick="closeRaceModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chapter Modal -->
+    <div class="modal-overlay" id="chapterModal">
+        <div class="modal" style="width: 700px; max-width: 90%;">
+            <h3 id="chapterModalTitle">Gestionar Capítulo</h3>
+            
+            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">ID del Capítulo</label>
+                    <input type="text" id="chapterId" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="ej: welcome, concept, race">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Título</label>
+                    <input type="text" id="chapterTitle" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="Título del capítulo">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Subtítulo</label>
+                    <input type="text" id="chapterSubtitle" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="Subtítulo del capítulo">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Orden</label>
+                    <input type="number" id="chapterOrder" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="Orden del capítulo">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Estado</label>
+                    <select id="chapterActive" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded">
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Tipo de Capítulo</label>
+                    <select id="chapterType" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded">
+                        <option value="normal">Normal</option>
+                        <option value="raceSelection">Selección de Raza</option>
+                        <option value="classSelection">Selección de Clase</option>
+                        <option value="requiresClass">Requiere Clase</option>
+                        <option value="summary">Resumen Final</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Contenido (Markdown)</label>
+                    <textarea id="chapterContent" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-48" placeholder="Escribe el contenido en formato Markdown..."></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="confirm" onclick="saveChapter()">Guardar Capítulo</button>
+                <button class="cancel" onclick="closeChapterModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Modal -->
+    <div class="modal-overlay" id="classModal">
+        <div class="modal" style="width: 700px; max-width: 90%;">
+            <h3 id="classModalTitle">Gestionar Clase</h3>
+            
+            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">ID de la Clase</label>
+                    <input type="text" id="classId" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="ej: barbarian, bard, cleric">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Nombre</label>
+                    <input type="text" id="className" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="Nombre de la clase">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Icono (emoji)</label>
+                    <input type="text" id="classIcon" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded" placeholder="⚔️">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Rol</label>
+                    <select id="classRole" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded">
+                        <option value="Combate físico">Combate físico</option>
+                        <option value="Magia">Magia</option>
+                        <option value="Apoyo">Apoyo</option>
+                        <option value="Exploración">Exploración</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Dificultad</label>
+                    <select id="classDifficulty" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded">
+                        <option value="Fácil">Fácil</option>
+                        <option value="Media">Media</option>
+                        <option value="Difícil">Difícil</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Descripción</label>
+                    <textarea id="classDescription" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-24" placeholder="Descripción breve de la clase"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Estado</label>
+                    <select id="classActive" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded">
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Contenido Específico (Markdown)</label>
+                    <textarea id="classSpecificContent" class="w-full bg-gray-700 border border-gray-600 text-white p-2 rounded h-48" placeholder="Escribe el contenido específico de la clase en formato Markdown..."></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="confirm" onclick="saveClassModal()">Guardar Clase</button>
+                <button class="cancel" onclick="closeClassModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-config.js"></script>
+    <script>
+        // Configuración
+        const K = 'benjamarcepau9';
+        const Q = [
+            {q: 'Perro de tu infancia:', a: 'Teo'},
+            {q: 'Nombre de tu tia silvina:', a: 'Minina'},
+            {q: 'Colegio de pertenensia:', a: 'I. Fahy'}
+        ];
+
+        let currentSection = null;
+        let currentSectionType = null;
+        let sectionCounter = {
+            lore: 3,
+            city: 3,
+            faction: 3,
+            plane: 3
+        };
+
+        // Funciones de encoding/decoding (maneja caracteres Unicode)
+        function enc(d) {
+            return btoa(unescape(encodeURIComponent(d)));
+        }
+        function dec(d) {
+            return decodeURIComponent(escape(atob(d)));
+        }
+
+        // Parser de Markdown
+        function parseMarkdown(text) {
+            let html = text;
+            html = html.replace(/^>\s*(.+)$/gm, '<div class="highlight-box" style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; padding: 1rem; margin: 1rem 0;"><p class="text-gray-300">$1</p></div>');
+            html = html.replace(/^# (.+)$/gm, '<h3 class="font-title text-xl text-neon-violet mb-2">$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h4 class="font-title text-lg text-neon-violet mb-2">$1</h4>');
+            html = html.replace(/^-\s*(.+)$/gm, '<li class="text-gray-300 ml-4">$1</li>');
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white font-bold">$1</strong>');
+            html = html.replace(/\*(.+?)\*/g, '<em class="text-gray-300 italic">$1</em>');
+            html = html.replace(/`([^`]+)`/g, '<code class="bg-gray-800 text-neon-violet px-2 py-1 rounded text-sm">$1</code>');
+            html = html.replace(/#([0-9a-fA-F]{6})(.+?)(?=#|$)/g, '<span style="color:#$1">$2</span>');
+            
+            // Aesthetic boxes with color support
+            html = html.replace(/^<\s*#([0-9a-fA-F]{6})\s*(.+)$/gm, (match, color, content) => {
+                return `<div class="aesthetic-box" style="border: 2px solid #${color}; background: rgba(${parseInt(color.substr(0,2),16)}, ${parseInt(color.substr(2,2),16)}, ${parseInt(color.substr(4,2),16)}, 0.1); padding: 1rem; margin: 1rem 0; border-radius: 8px;"><p class="text-gray-300">${content}</p></div>`;
+            });
+            html = html.replace(/^<\s*(.+)$/gm, '<div class="aesthetic-box" style="border: 2px solid rgba(139, 92, 246, 0.3); background: rgba(19, 16, 28, 0.5); padding: 1rem; margin: 1rem 0; border-radius: 8px;"><p class="text-gray-300">$1</p></div>');
+            
+            html = html.replace(/\n/g, '<br>');
+            return html;
+        }
+
+        // Verificar contraseña al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            let p = prompt('Contraseña del Panel Admin:');
+            if (p && p.trim() !== K) {
+                alert('Contraseña incorrecta');
+                window.location.href = 'index.html';
+                return;
+            } else if (!p) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadAllSections();
+            
+            // Agregar event listener para preview en tiempo real
+            const contentEditor = document.getElementById('contentEditor');
+            if (contentEditor) {
+                contentEditor.addEventListener('input', updatePreview);
+            }
+        });
+
+        // Cargar todas las secciones
+        function loadAllSections() {
+            loadSectionList('lore', 'loreList');
+            loadSectionList('city', 'cityList');
+            loadSectionList('faction', 'factionList');
+            loadSectionList('plane', 'planeList');
+            loadRaces();
+            loadCharacterClasses();
+            loadChapters();
+            loadAdventures();
+        }
+
+        // Cargar lista de secciones de un tipo
+        function loadSectionList(type, listId) {
+            const list = document.getElementById(listId);
+            list.innerHTML = '';
+
+            // Cargar contador desde localStorage
+            sectionCounter[type] = parseInt(localStorage.getItem(`admin_${type}_counter`)) || 3;
+            
+            const count = sectionCounter[type];
+            for (let i = 0; i < count; i++) {
+                const sectionId = `${type}${i}`;
+                const savedName = localStorage.getItem(`admin_${sectionId}_name`);
+                const name = savedName || `${type.charAt(0).toUpperCase() + type.slice(1)} ${i + 1}`;
+
+                const li = document.createElement('li');
+                li.className = 'section-item';
+                li.innerHTML = `
+                    <span>${name}</span>
+                    <button class="delete-btn" onclick="deleteSection('${type}', ${i}, event)">Eliminar</button>
+                `;
+                li.onclick = (e) => {
+                    if (!e.target.classList.contains('delete-btn')) {
+                        loadSection(type, i, e);
+                    }
+                };
+                list.appendChild(li);
+            }
+        }
+
+        // Cargar sección en el editor
+        function loadSection(type, index, e) {
+            currentSection = `${type}${index}`;
+            currentSectionType = type;
+
+            const sectionId = `${type}${index}`;
+            const savedName = localStorage.getItem(`admin_${sectionId}_name`);
+            const savedContent = localStorage.getItem(`admin_${sectionId}`);
+
+            document.getElementById('editorTitle').textContent = savedName || `${type.charAt(0).toUpperCase() + type.slice(1)} ${index + 1}`;
+            document.getElementById('sectionNameInput').value = savedName || '';
+            document.getElementById('sectionNameInput').style.display = 'block';
+            document.getElementById('contentEditor').value = savedContent ? dec(savedContent) : '';
+
+            // Actualizar UI activa
+            document.querySelectorAll('.section-item').forEach(item => item.classList.remove('active'));
+            if (e && e.currentTarget) {
+                e.currentTarget.classList.add('active');
+            }
+
+            // Actualizar preview
+            updatePreview();
+        }
+
+        // Guardar sección
+        function saveSection() {
+            if (!currentSection) {
+                alert('Selecciona una sección primero');
+                return;
+            }
+
+            const name = document.getElementById('sectionNameInput').value;
+            const content = document.getElementById('contentEditor').value;
+
+            // Verificar embeds
+            const html = parseMarkdown(content);
+            if (html.includes('<iframe') || html.includes('<embed') || html.includes('<object')) {
+                const r = Q[Math.floor(Math.random() * Q.length)];
+                const a = prompt(r.q);
+                if (a !== r.a) {
+                    alert('Respuesta incorrecta');
+                    return;
+                }
+            }
+
+            localStorage.setItem(`admin_${currentSection}_name`, name);
+            localStorage.setItem(`admin_${currentSection}`, enc(content));
+
+            alert('Guardado exitosamente');
+            loadAllSections();
+        }
+
+        // Limpiar editor
+        function clearEditor() {
+            currentSection = null;
+            currentSectionType = null;
+            document.getElementById('editorTitle').textContent = 'Selecciona una sección para editar';
+            document.getElementById('sectionNameInput').style.display = 'none';
+            document.getElementById('contentEditor').value = '';
+            document.getElementById('previewContent').innerHTML = '<p style="color: #72767d;">El preview aparecerá aquí...</p>';
+            document.querySelectorAll('.section-item').forEach(item => item.classList.remove('active'));
+        }
+
+        // Actualizar preview
+        function updatePreview() {
+            const content = document.getElementById('contentEditor').value;
+            if (!content.trim()) {
+                document.getElementById('previewContent').innerHTML = '<p style="color: #72767d;">El preview aparecerá aquí...</p>';
+                return;
+            }
+            document.getElementById('previewContent').innerHTML = parseMarkdown(content);
+        }
+
+        // Abrir modal para nueva sección
+        function openNewSectionModal(type) {
+            currentSectionType = type;
+            document.getElementById('modalTitle').textContent = `Crear Nueva ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            document.getElementById('newSectionName').value = '';
+            document.getElementById('newSectionModal').classList.add('active');
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('newSectionModal').classList.remove('active');
+        }
+
+        // Crear nueva sección
+        function createNewSection() {
+            const name = document.getElementById('newSectionName').value;
+            if (!name.trim()) {
+                alert('Ingresa un nombre para la sección');
+                return;
+            }
+
+            const index = sectionCounter[currentSectionType];
+            const sectionId = `${currentSectionType}${index}`;
+
+            localStorage.setItem(`admin_${sectionId}_name`, name);
+            localStorage.setItem(`admin_${sectionId}`, enc(''));
+
+            sectionCounter[currentSectionType]++;
+            localStorage.setItem(`admin_${currentSectionType}_counter`, sectionCounter[currentSectionType]);
+
+            closeModal();
+            loadAllSections();
+            loadSection(currentSectionType, index);
+        }
+
+        // Eliminar sección
+        function deleteSection(type, index, event) {
+            event.stopPropagation();
+
+            if (!confirm('¿Estás seguro de eliminar esta sección?')) {
+                return;
+            }
+
+            const sectionId = `${type}${index}`;
+            localStorage.removeItem(`admin_${sectionId}_name`);
+            localStorage.removeItem(`admin_${sectionId}`);
+
+            loadAllSections();
+            clearEditor();
+        }
+
+        // Navegar a otra página
+        function goToPage(page) {
+            window.location.href = `${page}.html`;
+        }
+
+        // ==================== GESTIÓN DE CLASES DE PERSONAJES ====================
+        
+        let characterClasses = [];
+        let currentClass = null;
+        let currentStepIndex = null;
+
+        /**
+         * Carga las clases de personajes desde localStorage
+         */
+        function loadCharacterClasses() {
+            const savedClasses = localStorage.getItem('character_guide_classes');
+            if (savedClasses) {
+                try {
+                    characterClasses = JSON.parse(savedClasses);
+                } catch (e) {
+                    console.error('Error al cargar clases:', e);
+                    characterClasses = [];
+                }
+            } else {
+                characterClasses = [];
+            }
+            renderClassList();
+        }
+
+        /**
+         * Renderiza la lista de clases en el sidebar
+         */
+        function renderClassList() {
+            const list = document.getElementById('classList');
+            list.innerHTML = '';
+
+            characterClasses.forEach((cls, index) => {
+                const li = document.createElement('li');
+                li.className = 'section-item';
+                li.innerHTML = `
+                    <span>${cls.icon} ${cls.name} ${!cls.active ? '(Inactiva)' : ''}</span>
+                    <div class="flex gap-1">
+                        <button class="duplicate-btn" onclick="duplicateCharacterClass(${index}, event)">Duplicar</button>
+                        <button class="delete-btn" onclick="deleteCharacterClass(${index}, event)">Eliminar</button>
+                    </div>
+                `;
+                li.onclick = (e) => {
+                    if (!e.target.classList.contains('delete-btn') && !e.target.classList.contains('duplicate-btn')) {
+                        openEditClassModal(index);
+                    }
+                };
+                list.appendChild(li);
+            });
+        }
+
+        /**
+         * Carga una clase en el editor
+         */
+        function loadCharacterClass(index) {
+            currentClass = characterClasses[index];
+            currentStepIndex = null;
+
+            document.getElementById('editorTitle').textContent = `${currentClass.icon} ${currentClass.name}`;
+            document.getElementById('sectionNameInput').value = currentClass.name;
+            document.getElementById('sectionNameInput').style.display = 'block';
+            
+            // Mostrar pasos de la clase con botones de acción
+            let stepsHTML = '<div class="mt-4">';
+            stepsHTML += '<div class="flex justify-between items-center mb-4">';
+            stepsHTML += '<h4 class="text-white">Pasos:</h4>';
+            stepsHTML += '<div class="flex gap-2">';
+            stepsHTML += '<button onclick="addStep()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">+ Agregar Paso</button>';
+            stepsHTML += '<button onclick="saveCharacterClass()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">Guardar Clase</button>';
+            stepsHTML += '</div></div>';
+            
+            stepsHTML += '<div id="stepsList" class="space-y-2">';
+            currentClass.steps.forEach((step, stepIndex) => {
+                stepsHTML += `
+                    <div class="bg-gray-700 p-3 rounded flex items-center gap-2" draggable="true" data-step-index="${stepIndex}">
+                        <div class="cursor-move text-gray-400">☰</div>
+                        <div class="flex-1 cursor-pointer hover:bg-gray-600 p-2 rounded" onclick="loadCharacterStep(${stepIndex})">
+                            <strong>${stepIndex + 1}. ${step.title}</strong>
+                            <p class="text-sm text-gray-400">${step.description.substring(0, 50)}...</p>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="previewStep(${stepIndex})" class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs">Preview</button>
+                            <button onclick="editStep(${stepIndex})" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs">Editar</button>
+                            <button onclick="duplicateStep(${stepIndex})" class="bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 rounded text-xs">Duplicar</button>
+                            <button onclick="deleteStep(${stepIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            });
+            stepsHTML += '</div></div>';
+            
+            document.getElementById('contentEditor').value = JSON.stringify(currentClass, null, 2);
+            document.getElementById('previewContent').innerHTML = stepsHTML;
+
+            // Actualizar UI activa
+            document.querySelectorAll('.section-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            updatePreview();
+            
+            // Configurar drag-and-drop
+            setupDragAndDrop();
+        }
+
+        /**
+         * Muestra el preview de un paso
+         */
+        function previewStep(stepIndex) {
+            loadCharacterStep(stepIndex);
+            // El preview ya se muestra en el área de previewContent
+        }
+
+        /**
+         * Carga un paso específico de la clase
+         */
+        function loadCharacterStep(stepIndex) {
+            currentStepIndex = stepIndex;
+            const step = currentClass.steps[stepIndex];
+            
+            let stepHTML = `
+                <div class="bg-gray-700 p-4 rounded">
+                    <h3 class="text-neon-violet text-xl mb-2">${step.title}</h3>
+                    <p class="text-gray-300 mb-4">${step.description}</p>
+                    ${step.image ? `<img src="${step.image}" class="w-full rounded mb-4" alt="${step.title}">` : ''}
+                    ${step.video ? `<video src="${step.video}" controls class="w-full rounded mb-4"></video>` : ''}
+                    ${step.instructions ? `
+                        <div>
+                            <h4 class="text-white mb-2">Instrucciones:</h4>
+                            <ul class="list-disc list-inside text-gray-300">
+                                ${step.instructions.map(inst => `<li>${inst}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    ${step.links && step.links.length > 0 ? `
+                        <div class="mt-4">
+                            <h4 class="text-white mb-2">Enlaces:</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${step.links.map(link => `<a href="${link.url}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">${link.title}</a>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${step.notes ? `
+                        <div class="mt-4 bg-yellow-900/20 border-l-4 border-yellow-500 p-3 rounded">
+                            <h4 class="text-yellow-500 mb-1">📝 Notas:</h4>
+                            <p class="text-gray-300">${step.notes}</p>
+                        </div>
+                    ` : ''}
+                    ${step.customContent ? `
+                        <div class="mt-4 bg-gray-800 p-3 rounded">
+                            <h4 class="text-neon-violet mb-1">Contenido Personalizado:</h4>
+                            <div class="text-gray-300">${step.customContent}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            document.getElementById('previewContent').innerHTML = stepHTML;
+        }
+
+        /**
+         * Abre el modal para agregar un nuevo paso
+         */
+        function addStep() {
+            currentStepIndex = null;
+            document.getElementById('stepModalTitle').textContent = 'Agregar Nuevo Paso';
+            document.getElementById('stepTitle').value = '';
+            document.getElementById('stepDescription').value = '';
+            document.getElementById('stepInstructions').value = '';
+            document.getElementById('stepImage').value = '';
+            document.getElementById('stepVideo').value = '';
+            document.getElementById('stepLinks').value = '';
+            document.getElementById('stepNotes').value = '';
+            document.getElementById('stepCustomContent').value = '';
+            document.getElementById('stepModal').classList.add('active');
+        }
+
+        /**
+         * Abre el modal para editar un paso existente
+         */
+        function editStep(stepIndex) {
+            currentStepIndex = stepIndex;
+            const step = currentClass.steps[stepIndex];
+            
+            document.getElementById('stepModalTitle').textContent = 'Editar Paso';
+            document.getElementById('stepTitle').value = step.title;
+            document.getElementById('stepDescription').value = step.description;
+            document.getElementById('stepInstructions').value = step.instructions ? step.instructions.join('\n') : '';
+            document.getElementById('stepImage').value = step.image || '';
+            document.getElementById('stepVideo').value = step.video || '';
+            document.getElementById('stepLinks').value = step.links ? step.links.map(l => `${l.title}|${l.url}`).join('\n') : '';
+            document.getElementById('stepNotes').value = step.notes || '';
+            document.getElementById('stepCustomContent').value = step.customContent || '';
+            document.getElementById('stepModal').classList.add('active');
+        }
+
+        /**
+         * Duplica un paso
+         */
+        function duplicateStep(stepIndex) {
+            const step = currentClass.steps[stepIndex];
+            const duplicatedStep = JSON.parse(JSON.stringify(step));
+            duplicatedStep.title = step.title + ' (copia)';
+            
+            currentClass.steps.splice(stepIndex + 1, 0, duplicatedStep);
+            saveCharacterClasses();
+            loadCharacterClass(characterClasses.indexOf(currentClass));
+        }
+
+        /**
+         * Elimina un paso
+         */
+        function deleteStep(stepIndex) {
+            if (!confirm('¿Estás seguro de eliminar este paso?')) {
+                return;
+            }
+            
+            currentClass.steps.splice(stepIndex, 1);
+            saveCharacterClasses();
+            loadCharacterClass(characterClasses.indexOf(currentClass));
+        }
+
+        /**
+         * Guarda el paso (nuevo o editado)
+         */
+        function saveStep() {
+            const title = document.getElementById('stepTitle').value;
+            const description = document.getElementById('stepDescription').value;
+            const instructionsText = document.getElementById('stepInstructions').value;
+            const image = document.getElementById('stepImage').value;
+            const video = document.getElementById('stepVideo').value;
+            const linksText = document.getElementById('stepLinks').value;
+            const notes = document.getElementById('stepNotes').value;
+            const customContent = document.getElementById('stepCustomContent').value;
+            
+            if (!title.trim()) {
+                alert('El título es requerido');
+                return;
+            }
+            
+            const instructions = instructionsText.split('\n').filter(i => i.trim());
+            const links = linksText.split('\n').filter(l => l.trim()).map(l => {
+                const parts = l.split('|');
+                return { title: parts[0], url: parts[1] || '#' };
+            });
+            
+            const stepData = {
+                title,
+                description,
+                instructions,
+                image,
+                video,
+                links,
+                notes,
+                customContent
+            };
+            
+            if (currentStepIndex !== null) {
+                // Editar paso existente
+                currentClass.steps[currentStepIndex] = stepData;
+            } else {
+                // Agregar nuevo paso
+                currentClass.steps.push(stepData);
+            }
+            
+            saveCharacterClasses();
+            closeStepModal();
+            loadCharacterClass(characterClasses.indexOf(currentClass));
+        }
+
+        /**
+         * Cierra el modal de pasos
+         */
+        function closeStepModal() {
+            document.getElementById('stepModal').classList.remove('active');
+        }
+
+        /**
+         * Guarda la clase completa
+         */
+        function saveCharacterClass() {
+            const name = document.getElementById('sectionNameInput').value;
+            if (!name.trim()) {
+                alert('El nombre es requerido');
+                return;
+            }
+            
+            currentClass.name = name;
+            currentClass.id = name.toLowerCase().replace(/\s+/g, '-');
+            
+            saveCharacterClasses();
+            alert('Clase guardada exitosamente');
+            loadAllSections();
+        }
+
+        /**
+         * Configura drag-and-drop para reordenar pasos
+         */
+        function setupDragAndDrop() {
+            const stepsList = document.getElementById('stepsList');
+            if (!stepsList) return;
+            
+            let draggedItem = null;
+            
+            stepsList.addEventListener('dragstart', (e) => {
+                draggedItem = e.target;
+                e.target.style.opacity = '0.5';
+            });
+            
+            stepsList.addEventListener('dragend', (e) => {
+                e.target.style.opacity = '1';
+                draggedItem = null;
+            });
+            
+            stepsList.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(stepsList, e.clientY);
+                if (afterElement == null) {
+                    stepsList.appendChild(draggedItem);
+                } else {
+                    stepsList.insertBefore(draggedItem, afterElement);
+                }
+            });
+            
+            stepsList.addEventListener('drop', (e) => {
+                e.preventDefault();
+                // Reordenar pasos en el array
+                const newOrder = [];
+                stepsList.querySelectorAll('[data-step-index]').forEach(item => {
+                    const oldIndex = parseInt(item.getAttribute('data-step-index'));
+                    newOrder.push(currentClass.steps[oldIndex]);
+                });
+                currentClass.steps = newOrder;
+                saveCharacterClasses();
+                loadCharacterClass(characterClasses.indexOf(currentClass));
+            });
+        }
+
+        /**
+         * Obtiene el elemento después del cursor para drag-and-drop
+         */
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('[draggable]:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        /**
+         * Abre el modal para crear nueva clase
+         */
+        function openNewClassModal() {
+            currentClass = null;
+            document.getElementById('classModalTitle').textContent = 'Crear Nueva Clase';
+            document.getElementById('classId').value = '';
+            document.getElementById('className').value = '';
+            document.getElementById('classIcon').value = '⚔️';
+            document.getElementById('classRole').value = 'Combate físico';
+            document.getElementById('classDifficulty').value = 'Media';
+            document.getElementById('classDescription').value = '';
+            document.getElementById('classActive').checked = true;
+            document.getElementById('classSpecificContent').value = '';
+            document.getElementById('classModal').classList.add('active');
+        }
+
+        /**
+         * Abre el modal para editar clase existente
+         */
+        function openEditClassModal(index) {
+            currentClass = characterClasses[index];
+            document.getElementById('classModalTitle').textContent = 'Editar Clase';
+            document.getElementById('classId').value = currentClass.id;
+            document.getElementById('className').value = currentClass.name;
+            document.getElementById('classIcon').value = currentClass.icon || '⚔️';
+            document.getElementById('classRole').value = currentClass.role || 'Combate físico';
+            document.getElementById('classDifficulty').value = currentClass.difficulty || 'Media';
+            document.getElementById('classDescription').value = currentClass.description || '';
+            document.getElementById('classActive').checked = currentClass.active !== false;
+            
+            const content = currentClass.classSpecificContent;
+            if (content && content.markdown) {
+                document.getElementById('classSpecificContent').value = content.markdown;
+            } else {
+                document.getElementById('classSpecificContent').value = '';
+            }
+            
+            document.getElementById('classModal').classList.add('active');
+        }
+
+        /**
+         * Guarda la clase (crear o editar)
+         */
+        function saveClassModal() {
+            const id = document.getElementById('classId').value.trim();
+            const name = document.getElementById('className').value.trim();
+            const icon = document.getElementById('classIcon').value.trim();
+            const role = document.getElementById('classRole').value;
+            const difficulty = document.getElementById('classDifficulty').value;
+            const description = document.getElementById('classDescription').value.trim();
+            const active = document.getElementById('classActive').checked;
+            const contentStr = document.getElementById('classSpecificContent').value;
+            
+            if (!id || !name) {
+                alert('ID y Nombre son requeridos');
+                return;
+            }
+            
+            const classData = {
+                id,
+                name,
+                icon: icon || '⚔️',
+                role,
+                difficulty,
+                description,
+                active,
+                classSpecificContent: {
+                    type: 'markdown',
+                    markdown: contentStr
+                }
+            };
+            
+            if (currentClass) {
+                const index = characterClasses.indexOf(currentClass);
+                characterClasses[index] = classData;
+            } else {
+                characterClasses.push(classData);
+            }
+            
+            saveCharacterClasses();
+            closeClassModal();
+            renderClassList();
+        }
+
+        /**
+         * Cierra el modal de clases
+         */
+        function closeClassModal() {
+            document.getElementById('classModal').classList.remove('active');
+        }
+
+        // ==================== RACE MANAGEMENT ====================
+
+        let currentRace = null;
+        let races = [];
+
+        /**
+         * Carga las razas desde localStorage
+         */
+        function loadRaces() {
+            const savedRaces = localStorage.getItem('character_guide_races');
+            if (savedRaces) {
+                races = JSON.parse(savedRaces);
+            } else {
+                races = [];
+            }
+            renderRaceList();
+        }
+
+        /**
+         * Guarda las razas en localStorage
+         */
+        function saveRaces() {
+            localStorage.setItem('character_guide_races', JSON.stringify(races));
+        }
+
+        /**
+         * Renderiza la lista de razas
+         */
+        function renderRaceList() {
+            const list = document.getElementById('raceList');
+            list.innerHTML = '';
+            
+            races.forEach((race, index) => {
+                const li = document.createElement('li');
+                li.className = 'section-item';
+                li.draggable = true;
+                li.innerHTML = `
+                    <span>${race.name} ${!race.active ? '(Inactiva)' : ''}</span>
+                    <div class="flex gap-2">
+                        <button class="duplicate-btn" onclick="duplicateRace(${index}, event)">Duplicar</button>
+                        <button class="delete-btn" onclick="deleteRace(${index}, event)">Eliminar</button>
+                    </div>
+                `;
+                
+                li.onclick = (e) => {
+                    if (!e.target.classList.contains('delete-btn') && !e.target.classList.contains('duplicate-btn')) {
+                        openEditRaceModal(index);
+                    }
+                };
+                
+                list.appendChild(li);
+            });
+        }
+
+        /**
+         * Abre el modal para crear nueva raza
+         */
+        function openNewRaceModal() {
+            currentRace = null;
+            document.getElementById('raceModalTitle').textContent = 'Crear Nueva Raza';
+            document.getElementById('raceId').value = '';
+            document.getElementById('raceName').value = '';
+            document.getElementById('raceDescription').value = '';
+            document.getElementById('raceTraits').value = '';
+            document.getElementById('raceBook').value = '';
+            document.getElementById('raceActive').checked = true;
+            document.getElementById('raceModal').classList.add('active');
+        }
+
+        /**
+         * Abre el modal para editar raza existente
+         */
+        function openEditRaceModal(index) {
+            currentRace = races[index];
+            document.getElementById('raceModalTitle').textContent = 'Editar Raza';
+            document.getElementById('raceId').value = currentRace.id;
+            document.getElementById('raceName').value = currentRace.name;
+            document.getElementById('raceDescription').value = currentRace.description || '';
+            document.getElementById('raceTraits').value = (currentRace.traits || []).join('\n');
+            document.getElementById('raceBook').value = currentRace.book || '';
+            document.getElementById('raceActive').checked = currentRace.active;
+            document.getElementById('raceModal').classList.add('active');
+        }
+
+        /**
+         * Guarda la raza (crear o editar)
+         */
+        function saveRace() {
+            const id = document.getElementById('raceId').value.trim();
+            const name = document.getElementById('raceName').value.trim();
+            const description = document.getElementById('raceDescription').value.trim();
+            const traitsStr = document.getElementById('raceTraits').value.trim();
+            const book = document.getElementById('raceBook').value.trim();
+            const active = document.getElementById('raceActive').checked;
+            
+            if (!id || !name) {
+                alert('ID y Nombre son requeridos');
+                return;
+            }
+            
+            const traits = traitsStr ? traitsStr.split('\n').map(t => t.trim()).filter(t => t) : [];
+            
+            const raceData = {
+                id,
+                name,
+                description,
+                traits,
+                book,
+                active
+            };
+            
+            if (currentRace) {
+                const index = races.indexOf(currentRace);
+                races[index] = raceData;
+            } else {
+                races.push(raceData);
+            }
+            
+            saveRaces();
+            closeRaceModal();
+            renderRaceList();
+        }
+
+        /**
+         * Duplica una raza
+         */
+        function duplicateRace(index, event) {
+            event.stopPropagation();
+            
+            const originalRace = races[index];
+            const duplicatedRace = JSON.parse(JSON.stringify(originalRace));
+            duplicatedRace.id = originalRace.id + '_copy';
+            duplicatedRace.name = originalRace.name + ' (Copia)';
+            
+            races.push(duplicatedRace);
+            saveRaces();
+            renderRaceList();
+        }
+
+        /**
+         * Elimina una raza
+         */
+        function deleteRace(index, event) {
+            event.stopPropagation();
+            
+            if (confirm('¿Estás seguro de eliminar esta raza?')) {
+                races.splice(index, 1);
+                saveRaces();
+                renderRaceList();
+            }
+        }
+
+        /**
+         * Cierra el modal de razas
+         */
+        function closeRaceModal() {
+            document.getElementById('raceModal').classList.remove('active');
+        }
+
+        // ==================== CHAPTER MANAGEMENT ====================
+
+        let currentChapter = null;
+        let chapters = [];
+
+        /**
+         * Carga los capítulos desde localStorage
+         */
+        function loadChapters() {
+            const savedChapters = localStorage.getItem('character_guide_phases');
+            if (savedChapters) {
+                chapters = JSON.parse(savedChapters);
+            } else {
+                chapters = [];
+            }
+            renderChapterList();
+        }
+
+        /**
+         * Guarda los capítulos en localStorage
+         */
+        function saveChapters() {
+            localStorage.setItem('character_guide_phases', JSON.stringify(chapters));
+        }
+
+        /**
+         * Renderiza la lista de capítulos
+         */
+        function renderChapterList() {
+            const list = document.getElementById('chapterList');
+            list.innerHTML = '';
+            
+            chapters.sort((a, b) => a.order - b.order);
+            
+            chapters.forEach((chapter, index) => {
+                const li = document.createElement('li');
+                li.className = 'section-item';
+                li.draggable = true;
+                li.innerHTML = `
+                    <span>${chapter.order}. ${chapter.title} ${!chapter.active ? '(Inactivo)' : ''}</span>
+                    <div class="flex gap-2">
+                        <button class="duplicate-btn" onclick="duplicateChapter(${index}, event)">Duplicar</button>
+                        <button class="delete-btn" onclick="deleteChapter(${index}, event)">Eliminar</button>
+                    </div>
+                `;
+                
+                li.onclick = (e) => {
+                    if (!e.target.classList.contains('delete-btn') && !e.target.classList.contains('duplicate-btn')) {
+                        openEditChapterModal(index);
+                    }
+                };
+                
+                list.appendChild(li);
+            });
+        }
+
+        /**
+         * Abre el modal para crear nuevo capítulo
+         */
+        function openNewChapterModal() {
+            currentChapter = null;
+            document.getElementById('chapterModalTitle').textContent = 'Crear Nuevo Capítulo';
+            document.getElementById('chapterId').value = '';
+            document.getElementById('chapterTitle').value = '';
+            document.getElementById('chapterSubtitle').value = '';
+            document.getElementById('chapterOrder').value = chapters.length + 1;
+            document.getElementById('chapterActive').checked = true;
+            document.getElementById('chapterType').value = 'normal';
+            document.getElementById('chapterContent').value = '';
+            document.getElementById('chapterModal').classList.add('active');
+        }
+
+        /**
+         * Abre el modal para editar capítulo existente
+         */
+        function openEditChapterModal(index) {
+            currentChapter = chapters[index];
+            document.getElementById('chapterModalTitle').textContent = 'Editar Capítulo';
+            document.getElementById('chapterId').value = currentChapter.id;
+            document.getElementById('chapterTitle').value = currentChapter.title;
+            document.getElementById('chapterSubtitle').value = currentChapter.subtitle;
+            document.getElementById('chapterOrder').value = currentChapter.order;
+            document.getElementById('chapterActive').checked = currentChapter.active;
+            
+            let chapterType = 'normal';
+            if (currentChapter.isRaceSelection) chapterType = 'raceSelection';
+            else if (currentChapter.isClassSelection) chapterType = 'classSelection';
+            else if (currentChapter.requiresClass) chapterType = 'requiresClass';
+            else if (currentChapter.isSummary) chapterType = 'summary';
+            
+            document.getElementById('chapterType').value = chapterType;
+            
+            const content = currentChapter.content;
+            if (content && content.markdown) {
+                document.getElementById('chapterContent').value = content.markdown;
+            } else {
+                document.getElementById('chapterContent').value = '';
+            }
+            
+            document.getElementById('chapterModal').classList.add('active');
+        }
+
+        /**
+         * Guarda el capítulo (crear o editar)
+         */
+        function saveChapter() {
+            const id = document.getElementById('chapterId').value.trim();
+            const title = document.getElementById('chapterTitle').value.trim();
+            const subtitle = document.getElementById('chapterSubtitle').value.trim();
+            const order = parseInt(document.getElementById('chapterOrder').value);
+            const active = document.getElementById('chapterActive').checked;
+            const type = document.getElementById('chapterType').value;
+            const contentStr = document.getElementById('chapterContent').value;
+            
+            if (!id || !title) {
+                alert('ID y Título son requeridos');
+                return;
+            }
+            
+            const chapterData = {
+                id,
+                title,
+                subtitle,
+                order,
+                active,
+                isRaceSelection: type === 'raceSelection',
+                isClassSelection: type === 'classSelection',
+                requiresClass: type === 'requiresClass',
+                isSummary: type === 'summary',
+                content: {
+                    type: 'markdown',
+                    markdown: contentStr
+                }
+            };
+            
+            if (currentChapter) {
+                const index = chapters.indexOf(currentChapter);
+                chapters[index] = chapterData;
+            } else {
+                chapters.push(chapterData);
+            }
+            
+            saveChapters();
+            closeChapterModal();
+            renderChapterList();
+        }
+
+        /**
+         * Duplica un capítulo
+         */
+        function duplicateChapter(index, event) {
+            event.stopPropagation();
+            
+            const originalChapter = chapters[index];
+            const duplicatedChapter = JSON.parse(JSON.stringify(originalChapter));
+            duplicatedChapter.id = originalChapter.id + '_copy';
+            duplicatedChapter.title = originalChapter.title + ' (Copia)';
+            duplicatedChapter.order = chapters.length + 1;
+            
+            chapters.push(duplicatedChapter);
+            saveChapters();
+            renderChapterList();
+        }
+
+        /**
+         * Elimina un capítulo
+         */
+        function deleteChapter(index, event) {
+            event.stopPropagation();
+            
+            if (confirm('¿Estás seguro de eliminar este capítulo?')) {
+                chapters.splice(index, 1);
+                
+                chapters.forEach((chapter, i) => {
+                    chapter.order = i + 1;
+                });
+                
+                saveChapters();
+                renderChapterList();
+            }
+        }
+
+        /**
+         * Cierra el modal de capítulos
+         */
+        function closeChapterModal() {
+            document.getElementById('chapterModal').classList.remove('active');
+        }
+
+        /**
+         * Crea una nueva clase de personaje
+         */
+        function createNewClass() {
+            const name = document.getElementById('newSectionName').value;
+            if (!name.trim()) {
+                alert('Ingresa un nombre para la clase');
+                return;
+            }
+
+            const newClass = {
+                id: name.toLowerCase().replace(/\s+/g, '-'),
+                name: name,
+                description: 'Descripción de la clase',
+                icon: '⚔️',
+                steps: [
+                    {
+                        title: 'Paso 1',
+                        description: 'Descripción del paso',
+                        instructions: ['Instrucción 1', 'Instrucción 2']
+                    }
+                ]
+            };
+
+            characterClasses.push(newClass);
+            saveCharacterClasses();
+            closeModal();
+            loadAllSections();
+            loadCharacterClass(characterClasses.length - 1);
+        }
+
+        /**
+         * Duplica una clase de personaje
+         */
+        function duplicateCharacterClass(index, event) {
+            event.stopPropagation();
+            
+            const originalClass = characterClasses[index];
+            const duplicatedClass = JSON.parse(JSON.stringify(originalClass));
+            
+            duplicatedClass.id = originalClass.id + '_copy';
+            duplicatedClass.name = originalClass.name + ' (Copia)';
+            
+            characterClasses.push(duplicatedClass);
+            saveCharacterClasses();
+            renderClassList();
+        }
+
+        /**
+         * Elimina una clase de personaje
+         */
+        function deleteCharacterClass(index, event) {
+            event.stopPropagation();
+
+            if (!confirm('¿Estás seguro de eliminar esta clase?')) {
+                return;
+            }
+
+            characterClasses.splice(index, 1);
+            saveCharacterClasses();
+            renderClassList();
+        }
+
+        /**
+         * Guarda las clases en localStorage
+         */
+        function saveCharacterClasses() {
+            localStorage.setItem('character_guide_classes', JSON.stringify(characterClasses));
+        }
+
+        // ==================== GESTIÓN DE AVENTURAS ====================
+        
+        let adventures = [];
+
+        /**
+         * Carga las aventuras desde la API
+         */
+        async function loadAdventures() {
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/adventures/admin/all`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    adventures = data.adventures;
+                    renderAdventureList();
+                } else {
+                    console.error('Error loading adventures');
+                    renderAdventureList();
+                }
+            } catch (error) {
+                console.error('Error loading adventures:', error);
+                renderAdventureList();
+            }
+        }
+
+        /**
+         * Renderiza la lista de aventuras en el sidebar
+         */
+        function renderAdventureList() {
+            const list = document.getElementById('adventureList');
+            list.innerHTML = '';
+
+            if (adventures.length === 0) {
+                list.innerHTML = '<li class="text-gray-500 text-sm p-2">No hay aventuras</li>';
+                return;
+            }
+
+            adventures.forEach(adventure => {
+                const li = document.createElement('li');
+                li.className = 'section-item';
+                
+                const statusColors = {
+                    'draft': 'bg-yellow-600',
+                    'published': 'bg-green-600',
+                    'archived': 'bg-gray-600',
+                    'deleted': 'bg-red-600'
+                };
+                
+                const statusLabels = {
+                    'draft': 'Borrador',
+                    'published': 'Publicado',
+                    'archived': 'Archivado',
+                    'deleted': 'Eliminado'
+                };
+
+                li.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm">${adventure.title}</span>
+                        <span class="${statusColors[adventure.status]} text-white text-xs px-2 py-1 rounded">${statusLabels[adventure.status]}</span>
+                        ${adventure.isOfficial ? '<span class="bg-neon-violet text-white text-xs px-2 py-1 rounded">OFICIAL</span>' : ''}
+                    </div>
+                    <div class="flex gap-1">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded" onclick="editAdventure('${adventure._id}', event)">Editar</button>
+                        <button class="bg-purple-600 hover:bg-purple-700 text-white text-xs px-2 py-1 rounded" onclick="toggleOfficial('${adventure._id}', event)">Oficial</button>
+                        <button class="bg-gray-600 hover:bg-gray-700 text-white text-xs px-2 py-1 rounded" onclick="toggleDisable('${adventure._id}', event)">${adventure.isDisabled ? 'Habilitar' : 'Deshabilitar'}</button>
+                        <button class="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded" onclick="deleteAdventure('${adventure._id}', event)">Eliminar</button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        /**
+         * Edita una aventura
+         */
+        function editAdventure(adventureId, event) {
+            event.stopPropagation();
+            window.open(`aventura-editor.html?id=${adventureId}`, '_blank');
+        }
+
+        /**
+         * Alterna el estado oficial de una aventura
+         */
+        async function toggleOfficial(adventureId, event) {
+            event.stopPropagation();
+            
+            const adventure = adventures.find(a => a._id === adventureId);
+            if (!adventure) return;
+
+            try {
+                const method = adventure.isOfficial ? 'DELETE' : 'PUT';
+                const response = await fetch(`${API_CONFIG.BASE_URL}/adventures/${adventureId}/official`, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    adventure.isOfficial = !adventure.isOfficial;
+                    renderAdventureList();
+                } else {
+                    alert('Error al cambiar estado oficial');
+                }
+            } catch (error) {
+                console.error('Error toggling official status:', error);
+                alert('Error al cambiar estado oficial');
+            }
+        }
+
+        /**
+         * Alterna el estado deshabilitado de una aventura
+         */
+        async function toggleDisable(adventureId, event) {
+            event.stopPropagation();
+            
+            const adventure = adventures.find(a => a._id === adventureId);
+            if (!adventure) return;
+
+            try {
+                const endpoint = adventure.isDisabled ? 'enable' : 'disable';
+                const response = await fetch(`${API_CONFIG.BASE_URL}/adventures/${adventureId}/${endpoint}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    adventure.isDisabled = !adventure.isDisabled;
+                    renderAdventureList();
+                } else {
+                    alert('Error al cambiar estado');
+                }
+            } catch (error) {
+                console.error('Error toggling disable status:', error);
+                alert('Error al cambiar estado');
+            }
+        }
+
+        /**
+         * Elimina una aventura
+         */
+        async function deleteAdventure(adventureId, event) {
+            event.stopPropagation();
+
+            if (!confirm('¿Estás seguro de eliminar esta aventura?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/adventures/${adventureId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    adventures = adventures.filter(a => a._id !== adventureId);
+                    renderAdventureList();
+                } else {
+                    alert('Error al eliminar aventura');
+                }
+            } catch (error) {
+                console.error('Error deleting adventure:', error);
+                alert('Error al eliminar aventura');
+            }
+        }
+
+        /**
+         * Sobrescribe createNewSection para manejar creación de clases
+         */
+        const originalCreateNewSection = createNewSection;
+        createNewSection = function() {
+            const name = document.getElementById('newSectionName').value;
+            if (!name.trim()) {
+                alert('Ingresa un nombre para la sección');
+                return;
+            }
+
+            // Si estamos creando una clase de personaje
+            if (document.getElementById('modalTitle').textContent.includes('Clase de Personaje')) {
+                createNewClass();
+                return;
+            }
+
+            // Si no, usar la función original
+            originalCreateNewSection();
+        };
+    </script>
+</body>
+</html>

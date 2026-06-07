@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matchmaking - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .matchmaking-card {
+            background: rgba(19, 16, 28, 0.9);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .matchmaking-card:hover {
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+        .player-slot {
+            background: rgba(9, 7, 15, 0.8);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .player-slot.filled {
+            border-color: rgba(46, 204, 113, 0.6);
+            background: rgba(46, 204, 113, 0.1);
+        }
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .searching-indicator {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .availability-day {
+            background: rgba(19, 16, 28, 0.8);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .availability-day.selected {
+            border-color: #3ba55c;
+            background: rgba(59, 165, 92, 0.1);
+        }
+        .time-slot {
+            background: rgba(9, 7, 15, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .time-slot:hover {
+            border-color: #8b5cf6;
+        }
+        .time-slot.selected {
+            background: rgba(59, 165, 92, 0.2);
+            border-color: #3ba55c;
+        }
+    </style>
+</head>
+<body class="font-body text-platinum-white min-h-screen">
+    <div id="flashOverlay" class="flash-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-umbra/90 backdrop-blur-sm border-b border-neon-violet/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <a href="index.html" class="font-title text-2xl text-neon-violet hover:text-violet-400 transition-colors">LA CRIPTA</a>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="mapa.html" class="nav-link text-sm uppercase tracking-wider">Mapa</a>
+                    <a href="facciones.html" class="nav-link text-sm uppercase tracking-wider">Facciones</a>
+                    <a href="ciudades.html" class="nav-link text-sm uppercase tracking-wider">Ciudades</a>
+                    <a href="lore.html" class="nav-link text-sm uppercase tracking-wider">Lore</a>
+                    <a href="matchmaking.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet font-bold">Matchmaking</a>
+                    <a href="destino.html" class="nav-link text-sm uppercase tracking-wider">Destino</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="min-h-screen pt-24 px-4 py-8">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="font-title text-5xl md:text-6xl text-center mb-8 text-neon-violet drop-shadow-[0_0_30px_rgba(139,92,246,0.6)]">
+                ⚔️ Matchmaking de Campañas ⚔️
+            </h1>
+            <p class="text-center text-gray-400 mb-12 text-lg">
+                Encuentra tu grupo de aventura para sesiones de D&D a largo plazo
+            </p>
+
+            <!-- Search Section -->
+            <div class="matchmaking-card p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-title text-2xl text-neon-violet">🎭 Buscar Grupo</h2>
+                    <button id="editAvailabilityBtn" 
+                        class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all duration-300">
+                        📅 Editar Disponibilidad
+                    </button>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm uppercase tracking-wider text-gray-400 mb-2">Clase Preferida</label>
+                    <select id="playerClass" 
+                        class="w-full bg-dark-umbra border-2 border-neon-violet/30 rounded-lg px-4 py-3 text-platinum-white focus:border-neon-violet focus:outline-none transition-colors">
+                        <option value="">Selecciona tu clase...</option>
+                        <option value="Guerrero">⚔️ Guerrero</option>
+                        <option value="Mago">🧙‍♂️ Mago</option>
+                        <option value="Clérigo">🛡️ Clérigo</option>
+                        <option value="Pícaro">🗡️ Pícaro</option>
+                        <option value="Bárbaro">🪓 Bárbaro</option>
+                        <option value="Bardo">🪕 Bardo</option>
+                        <option value="Druida">🐻 Druida</option>
+                        <option value="Paladín">🛡️✨ Paladín</option>
+                        <option value="Explorador">🏹 Explorador</option>
+                        <option value="Monje">🥋 Monje</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-4">
+                    <button id="searchButton" 
+                        class="flex-1 bg-neon-violet hover:bg-violet-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-violet-glow hover:shadow-violet-glow-hover">
+                        🔍 Buscar Grupo
+                    </button>
+                    <button id="cancelButton" 
+                        class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300">
+                        ❌ Cancelar
+                    </button>
+                </div>
+
+                <!-- Current Search Status -->
+                <div id="searchStatus" class="hidden mt-6 p-4 bg-dark-umbra/50 rounded-lg border border-neon-violet/30">
+                    <div class="flex items-center gap-3">
+                        <div class="searching-indicator text-2xl">🔄</div>
+                        <div>
+                            <p class="font-bold text-neon-violet">Buscando grupo...</p>
+                            <p class="text-sm text-gray-400">Disponibilidad: <span id="searchTimezone"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Groups Section -->
+            <div class="matchmaking-card p-8">
+                <h2 class="font-title text-2xl text-neon-violet mb-6">👥 Grupos Buscando Jugadores</h2>
+                
+                <div id="activeGroups" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Groups will be loaded here -->
+                </div>
+
+                <div id="noGroups" class="text-center py-12 text-gray-400">
+                    <p class="text-4xl mb-4">🔍</p>
+                    <p>No hay grupos buscando jugadores en este momento.</p>
+                    <p class="text-sm mt-2">¡Sé el primero en buscar grupo!</p>
+                </div>
+            </div>
+
+            <!-- Your Current Group -->
+            <div id="yourGroup" class="hidden matchmaking-card p-8 mt-8 border-green-500/50">
+                <h2 class="font-title text-2xl text-green-400 mb-6">🎲 Tu Grupo Actual</h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="yourGroupSlots">
+                    <!-- Your group slots will be loaded here -->
+                </div>
+
+                <div class="mt-6 p-4 bg-green-500/10 rounded-lg border border-green-500/30">
+                    <p class="text-green-400 font-bold mb-2">📅 Horario Unificado: <span id="groupTimezone"></span></p>
+                    <p class="text-sm text-gray-400">Próxima sesión: Sesión 0 - Creación de Personajes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Edit Availability Modal -->
+    <div id="editAvailabilityModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center px-4">
+        <div class="matchmaking-card p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="font-title text-2xl text-neon-violet">📅 Editar Disponibilidad</h2>
+                <button id="closeEditModal" class="text-gray-400 hover:text-white text-2xl">✕</button>
+            </div>
+
+            <div id="editDaysContainer" class="grid grid-cols-1 gap-4 mb-6">
+                <!-- Days will be generated here -->
+            </div>
+
+            <div class="flex gap-4">
+                <button id="deleteAvailabilityBtn" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300">
+                    🗑️ Borrar Todo
+                </button>
+                <button id="saveEditAvailabilityBtn" class="flex-1 bg-neon-violet hover:bg-violet-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-violet-glow hover:shadow-violet-glow-hover">
+                    💾 Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE = '/api';
+        const SOCKET_URL = window.location.origin;
+
+        // DOM elements
+        const searchButton = document.getElementById('searchButton');
+        const cancelButton = document.getElementById('cancelButton');
+        const searchStatus = document.getElementById('searchStatus');
+        const searchTimezone = document.getElementById('searchTimezone');
+        const activeGroups = document.getElementById('activeGroups');
+        const noGroups = document.getElementById('noGroups');
+        const yourGroup = document.getElementById('yourGroup');
+        const yourGroupSlots = document.getElementById('yourGroupSlots');
+        const groupTimezone = document.getElementById('groupTimezone');
+        const editAvailabilityBtn = document.getElementById('editAvailabilityBtn');
+        const editAvailabilityModal = document.getElementById('editAvailabilityModal');
+        const closeEditModal = document.getElementById('closeEditModal');
+        const editDaysContainer = document.getElementById('editDaysContainer');
+        const deleteAvailabilityBtn = document.getElementById('deleteAvailabilityBtn');
+        const saveEditAvailabilityBtn = document.getElementById('saveEditAvailabilityBtn');
+
+        let searchInterval = null;
+        let currentUser = null;
+        let socket = null;
+
+        // Days of the week
+        const daysOfWeek = [
+            { name: 'Lunes', value: 'monday' },
+            { name: 'Martes', value: 'tuesday' },
+            { name: 'Miércoles', value: 'wednesday' },
+            { name: 'Jueves', value: 'thursday' },
+            { name: 'Viernes', value: 'friday' },
+            { name: 'Sábado', value: 'saturday' },
+            { name: 'Domingo', value: 'sunday' }
+        ];
+
+        // Time slots
+        const timeSlots = [
+            '10:00-12:00', '12:00-14:00', '14:00-16:00', '16:00-18:00',
+            '18:00-20:00', '19:00-21:00', '20:00-22:00', '21:00-23:00', '22:00-00:00'
+        ];
+
+        // Check if user is logged in and registered
+        async function checkAuth() {
+            const token = localStorage.getItem('cripta_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    currentUser = result.user;
+                    localStorage.setItem('cripta_user', JSON.stringify(currentUser));
+                    
+                    // Check mandatory registration fields
+                    if (!currentUser.username || !currentUser.country || !currentUser.timezone) {
+                        alert('Debes completar el registro obligatorio antes de acceder al matchmaking');
+                        window.location.href = 'login.html';
+                        return false;
+                    }
+                    
+                    return true;
+                } else {
+                    localStorage.removeItem('cripta_token');
+                    window.location.href = 'login.html';
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error checking auth:', error);
+                window.location.href = 'login.html';
+                return false;
+            }
+        }
+
+        // Initialize Socket.IO
+        function initSocket() {
+            socket = io(SOCKET_URL);
+            
+            socket.on('connect', () => {
+                console.log('Conectado a Socket.IO');
+                if (currentUser) {
+                    socket.emit('join-matchmaking', currentUser._id);
+                }
+            });
+
+            socket.on('group-found', (data) => {
+                showGroup(data.members, data.commonAvailability);
+            });
+
+            socket.on('new-search', (search) => {
+                renderActiveGroups();
+            });
+
+            socket.on('search-cancelled', (search) => {
+                renderActiveGroups();
+            });
+        }
+
+        // Create a new search
+        async function createSearch() {
+            const playerClass = document.getElementById('playerClass').value;
+
+            if (!playerClass) {
+                alert('Por favor selecciona tu clase preferida');
+                return;
+            }
+
+            // Check if user has availability
+            if (!currentUser.availability || Object.keys(currentUser.availability).length === 0) {
+                alert('Por favor configura tu disponibilidad semanal primero');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/matchmaking/search`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`
+                    },
+                    body: JSON.stringify({ playerClass })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('your_matchmaking_search', JSON.stringify(result.search));
+                    startSearching();
+                } else {
+                    alert(result.error || 'Error creando búsqueda');
+                }
+            } catch (error) {
+                console.error('Error creating search:', error);
+                alert('Error de conexión con el servidor');
+            }
+        }
+
+        // Cancel search
+        async function cancelSearch() {
+            try {
+                const response = await fetch(`${API_BASE}/matchmaking/search`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    localStorage.removeItem('your_matchmaking_search');
+                    stopSearching();
+                } else {
+                    const result = await response.json();
+                    alert(result.error || 'Error cancelando búsqueda');
+                }
+            } catch (error) {
+                console.error('Error canceling search:', error);
+                alert('Error de conexión con el servidor');
+            }
+        }
+
+        // Start searching
+        async function startSearching() {
+            const yourSearch = JSON.parse(localStorage.getItem('your_matchmaking_search'));
+            if (!yourSearch) return;
+
+            searchButton.classList.add('hidden');
+            cancelButton.classList.remove('hidden');
+            searchStatus.classList.remove('hidden');
+            searchTimezone.textContent = Object.keys(yourSearch.availability).join(', ');
+
+            // Start polling for matches
+            searchInterval = setInterval(async () => {
+                await checkForMatches();
+            }, 2000);
+
+            renderActiveGroups();
+        }
+
+        // Stop searching
+        function stopSearching() {
+            searchButton.classList.remove('hidden');
+            cancelButton.classList.add('hidden');
+            searchStatus.classList.add('hidden');
+
+            if (searchInterval) {
+                clearInterval(searchInterval);
+                searchInterval = null;
+            }
+
+            renderActiveGroups();
+        }
+
+        // Check for matches based on availability overlap
+        async function checkForMatches() {
+            try {
+                const response = await fetch(`${API_BASE}/matchmaking/check-matches`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.match) {
+                    showGroup(result.members, result.commonAvailability);
+                }
+            } catch (error) {
+                console.error('Error checking matches:', error);
+            }
+        }
+
+        // Check if two availability schedules overlap
+        function hasAvailabilityOverlap(avail1, avail2) {
+            for (const day in avail1) {
+                if (avail2[day]) {
+                    // Check if any time slots overlap
+                    const daySlots1 = avail1[day];
+                    const daySlots2 = avail2[day];
+                    if (daySlots1.some(slot => daySlots2.includes(slot))) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Calculate common availability across multiple users
+        function calculateCommonAvailability(availabilities) {
+            const common = {};
+            
+            // Get all days that appear in all availabilities
+            const allDays = new Set();
+            availabilities.forEach(avail => {
+                Object.keys(avail).forEach(day => allDays.add(day));
+            });
+
+            allDays.forEach(day => {
+                // Get time slots for this day from all users
+                const daySlots = availabilities.map(avail => avail[day] || []);
+                
+                // Find intersection of all time slots
+                const commonSlots = daySlots[0].filter(slot => 
+                    daySlots.every(slots => slots.includes(slot))
+                );
+
+                if (commonSlots.length > 0) {
+                    common[day] = commonSlots;
+                }
+            });
+
+            return common;
+        }
+
+        // Show formed group
+        function showGroup(members, commonAvailability) {
+            stopSearching();
+
+            yourGroup.classList.remove('hidden');
+            
+            // Format availability for display
+            const availabilityText = Object.entries(commonAvailability)
+                .map(([day, slots]) => `${day}: ${slots.join(', ')}`)
+                .join('\n');
+
+            groupTimezone.textContent = availabilityText || 'Por definir';
+
+            yourGroupSlots.innerHTML = members.map(member => `
+                <div class="player-slot filled p-4 text-center">
+                    <div class="text-3xl mb-2">${getClassIcon(member.class)}</div>
+                    <div class="font-bold text-platinum-white">${member.name}</div>
+                    <div class="text-2xl">${member.country}</div>
+                    <div class="text-sm text-gray-400">${member.class}</div>
+                </div>
+            `).join('');
+
+            // Auto-hide after 30 seconds
+            setTimeout(() => {
+                yourGroup.classList.add('hidden');
+            }, 30000);
+        }
+
+        // Get class icon
+        function getClassIcon(className) {
+            const icons = {
+                'Guerrero': '⚔️',
+                'Mago': '🧙‍♂️',
+                'Clérigo': '🛡️',
+                'Pícaro': '🗡️',
+                'Bárbaro': '🪓',
+                'Bardo': '🪕',
+                'Druida': '🐻',
+                'Paladín': '🛡️✨',
+                'Explorador': '🏹',
+                'Monje': '🥋'
+            };
+            return icons[className] || '🎭';
+        }
+
+        // Render active groups
+        async function renderActiveGroups() {
+            try {
+                const response = await fetch(`${API_BASE}/matchmaking/active`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    const otherSearches = result.searches;
+
+                    if (otherSearches.length === 0) {
+                        activeGroups.innerHTML = '';
+                        noGroups.classList.remove('hidden');
+                        return;
+                    }
+
+                    noGroups.classList.add('hidden');
+                    activeGroups.innerHTML = otherSearches.map(search => {
+                        const availabilityText = Object.entries(search.availability)
+                            .slice(0, 2)
+                            .map(([day, slots]) => `${day}: ${slots.slice(0, 2).join(', ')}${slots.length > 2 ? '...' : ''}`)
+                            .join(' | ');
+
+                        return `
+                        <div class="player-slot p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="text-3xl">${getClassIcon(search.playerClass)}</div>
+                                <div>
+                                    <div class="font-bold text-platinum-white">${search.playerName}</div>
+                                    <div class="text-sm text-gray-400">${search.country} • ${search.playerClass}</div>
+                                </div>
+                            </div>
+                            <div class="border-t border-neon-violet/20 pt-4">
+                                <p class="text-sm text-neon-violet">📅 ${availabilityText}</p>
+                                <p class="text-xs text-gray-500 mt-1">Buscando: ${new Date(search.timestamp).toLocaleTimeString()}</p>
+                            </div>
+                        </div>
+                    `}).join('');
+                }
+            } catch (error) {
+                console.error('Error rendering active groups:', error);
+            }
+        }
+
+        // Edit Availability Functions
+        function openEditAvailabilityModal() {
+            editAvailabilityModal.classList.remove('hidden');
+            generateEditDays();
+        }
+
+        function closeEditAvailabilityModal() {
+            editAvailabilityModal.classList.add('hidden');
+        }
+
+        function generateEditDays() {
+            editDaysContainer.innerHTML = daysOfWeek.map(day => {
+                const isDayAvailable = currentUser.availability && currentUser.availability[day.value];
+                const daySlots = currentUser.availability && currentUser.availability[day.value] || [];
+                
+                return `
+                <div class="availability-day p-4 ${isDayAvailable ? 'selected' : ''}" data-day="${day.value}">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-neon-violet">${day.name}</h3>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" class="day-checkbox w-5 h-5 rounded" data-day="${day.value}" ${isDayAvailable ? 'checked' : ''}>
+                            <span class="text-sm text-gray-400">Disponible</span>
+                        </label>
+                    </div>
+                    <div class="time-slots grid grid-cols-3 md:grid-cols-5 gap-2 ${isDayAvailable ? '' : 'hidden'}" data-day-slots="${day.value}">
+                        ${timeSlots.map(slot => `
+                            <button type="button" class="time-slot text-xs py-2 px-3 text-gray-400 hover:text-white ${daySlots.includes(slot) ? 'selected' : ''}" data-time="${slot}">
+                                ${slot}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `}).join('');
+
+            // Add event listeners for day checkboxes
+            document.querySelectorAll('#editDaysContainer .day-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const day = e.target.dataset.day;
+                    const slotsContainer = document.querySelector(`#editDaysContainer [data-day-slots="${day}"]`);
+                    const dayContainer = document.querySelector(`#editDaysContainer [data-day="${day}"]`);
+                    
+                    if (e.target.checked) {
+                        slotsContainer.classList.remove('hidden');
+                        dayContainer.classList.add('selected');
+                    } else {
+                        slotsContainer.classList.add('hidden');
+                        dayContainer.classList.remove('selected');
+                        // Deselect all time slots
+                        slotsContainer.querySelectorAll('.time-slot').forEach(slot => {
+                            slot.classList.remove('selected');
+                        });
+                    }
+                });
+            });
+
+            // Add event listeners for time slots
+            document.querySelectorAll('#editDaysContainer .time-slot').forEach(slot => {
+                slot.addEventListener('click', (e) => {
+                    e.target.classList.toggle('selected');
+                });
+            });
+        }
+
+        function collectEditAvailability() {
+            const availability = {};
+            
+            daysOfWeek.forEach(day => {
+                const checkbox = document.querySelector(`#editDaysContainer .day-checkbox[data-day="${day.value}"]`);
+                if (checkbox && checkbox.checked) {
+                    const selectedSlots = document.querySelectorAll(`#editDaysContainer [data-day-slots="${day.value}"] .time-slot.selected`);
+                    availability[day.value] = Array.from(selectedSlots).map(slot => slot.dataset.time);
+                }
+            });
+
+            return availability;
+        }
+
+        async function deleteAllAvailability() {
+            if (confirm('¿Estás seguro de borrar toda tu disponibilidad?')) {
+                try {
+                    const response = await fetch(`${API_BASE}/auth/availability`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`
+                        },
+                        body: JSON.stringify({ availability: {} })
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        currentUser = result.user;
+                        localStorage.setItem('cripta_user', JSON.stringify(currentUser));
+                        closeEditAvailabilityModal();
+                        alert('Disponibilidad borrada exitosamente');
+                    } else {
+                        alert('Error borrando disponibilidad');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error de conexión');
+                }
+            }
+        }
+
+        async function saveEditAvailability() {
+            const newAvailability = collectEditAvailability();
+            try {
+                const response = await fetch(`${API_BASE}/auth/availability`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('cripta_token')}`
+                    },
+                    body: JSON.stringify({ availability: newAvailability })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    currentUser = result.user;
+                    localStorage.setItem('cripta_user', JSON.stringify(currentUser));
+                    closeEditAvailabilityModal();
+                    alert('Disponibilidad actualizada exitosamente');
+                } else {
+                    alert('Error actualizando disponibilidad');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión');
+            }
+        }
+
+        // Event listeners
+        searchButton.addEventListener('click', createSearch);
+        cancelButton.addEventListener('click', cancelSearch);
+        editAvailabilityBtn.addEventListener('click', openEditAvailabilityModal);
+        closeEditModal.addEventListener('click', closeEditAvailabilityModal);
+        deleteAvailabilityBtn.addEventListener('click', deleteAllAvailability);
+        saveEditAvailabilityBtn.addEventListener('click', saveEditAvailability);
+
+        // Initial check
+        (async function() {
+            if (await checkAuth()) {
+                initSocket();
+                await renderActiveGroups();
+
+                // Periodic refresh of active groups
+                setInterval(renderActiveGroups, 3000);
+
+                // Check for existing search
+                const yourSearch = JSON.parse(localStorage.getItem('your_matchmaking_search'));
+                if (yourSearch) {
+                    await startSearching();
+                }
+            }
+        })();
+    </script>
+    <script src="../js/user-menu.js"></script>
+</body>
+</html>

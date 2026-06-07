@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Aventura - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body text-platinum-white min-h-screen bg-shadow-graphite">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-umbra/90 backdrop-blur-sm border-b border-neon-violet/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <a href="index.html" class="font-title text-2xl text-neon-violet hover:text-violet-400 transition-colors">LA CRIPTA</a>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="mapa.html" class="nav-link text-sm uppercase tracking-wider">Mapa</a>
+                    <a href="facciones.html" class="nav-link text-sm uppercase tracking-wider">Facciones</a>
+                    <a href="ciudades.html" class="nav-link text-sm uppercase tracking-wider">Ciudades</a>
+                    <a href="lore.html" class="nav-link text-sm uppercase tracking-wider">Lore</a>
+                    <a href="aventuras.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet font-bold">Aventuras</a>
+                    <a href="matchmaking.html" class="nav-link text-sm uppercase tracking-wider">Matchmaking</a>
+                    <a href="destino.html" class="nav-link text-sm uppercase tracking-wider">Destino</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="font-title text-4xl text-neon-violet mb-2">Editor de Aventura</h1>
+                    <p id="adventureStatus" class="text-gray-400">Estado: <span class="text-yellow-400">Borrador</span></p>
+                </div>
+                <div class="flex gap-4">
+                    <button id="saveDraftBtn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300">
+                        Guardar Borrador
+                    </button>
+                    <button id="publishBtn" class="bg-neon-violet hover:bg-violet-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300">
+                        Publicar
+                    </button>
+                    <button id="previewBtn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300">
+                        Vista Previa
+                    </button>
+                </div>
+            </div>
+
+            <!-- Adventure Info -->
+            <div class="bg-dark-umbra/90 border border-neon-violet/30 rounded-lg p-6 mb-8">
+                <h2 class="font-title text-2xl text-neon-violet mb-4">Información de la Aventura</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Título</label>
+                        <input type="text" id="editTitle" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Categoría</label>
+                        <select id="editCategory" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                            <option value="Fantasy">Fantasía</option>
+                            <option value="Horror">Horror</option>
+                            <option value="Mystery">Misterio</option>
+                            <option value="Sci-Fi">Ciencia Ficción</option>
+                            <option value="Historical">Histórica</option>
+                            <option value="Custom">Personalizada</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm text-gray-400 mb-2">Descripción</label>
+                        <textarea id="editDescription" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Nivel Recomendado</label>
+                        <input type="number" id="editLevel" min="1" max="20" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Jugadores Recomendados</label>
+                        <input type="number" id="editPlayers" min="1" max="10" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                    </div>
+                </div>
+                <button id="updateInfoBtn" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-all duration-300">
+                    Actualizar Información
+                </button>
+            </div>
+
+            <!-- Chapters Section -->
+            <div class="bg-dark-umbra/90 border border-neon-violet/30 rounded-lg p-6 mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-title text-2xl text-neon-violet">Capítulos</h2>
+                    <button id="addChapterBtn" class="bg-neon-violet hover:bg-violet-600 text-white font-bold py-2 px-4 rounded transition-all duration-300">
+                        + Agregar Capítulo
+                    </button>
+                </div>
+                <div id="chaptersList" class="space-y-4">
+                    <!-- Chapters will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Chapter Flow Visualization -->
+            <div class="bg-dark-umbra/90 border border-neon-violet/30 rounded-lg p-6">
+                <h2 class="font-title text-2xl text-neon-violet mb-4">Flujo de la Aventura</h2>
+                <div id="flowVisualization" class="min-h-[200px] flex items-center justify-center">
+                    <p class="text-gray-400">Agrega capítulos para ver el flujo de la aventura</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Chapter Edit Modal -->
+    <div id="chapterModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-umbra border border-neon-violet/30 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-title text-2xl text-neon-violet">Editar Capítulo</h2>
+                    <button id="closeChapterModal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                </div>
+
+                <form id="chapterForm" class="space-y-4">
+                    <input type="hidden" id="chapterId">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Título del Capítulo *</label>
+                            <input type="text" id="chapterTitle" required class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Orden</label>
+                            <input type="number" id="chapterOrder" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Narrativa *</label>
+                        <textarea id="chapterNarrative" required rows="6" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Escribe la narrativa de este capítulo..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Imágenes (URLs, una por línea)</label>
+                        <textarea id="chapterImages" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="https://..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Recompensas (una por línea)</label>
+                        <textarea id="chapterRewards" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Oro, experiencia, objetos..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Condiciones (una por línea)</label>
+                        <textarea id="chapterConditions" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Condiciones para acceder a este capítulo..."></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+                            <input type="checkbox" id="isEnding" class="w-4 h-4 accent-neon-violet">
+                            Es un final
+                        </label>
+                        <select id="endingType" class="bg-gray-800 border border-gray-700 text-white p-2 rounded focus:border-neon-violet focus:outline-none">
+                            <option value="">Tipo de final</option>
+                            <option value="good">Bueno</option>
+                            <option value="bad">Malo</option>
+                            <option value="neutral">Neutral</option>
+                            <option value="secret">Secreto</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit" class="flex-1 bg-neon-violet hover:bg-violet-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Guardar Capítulo
+                        </button>
+                        <button type="button" id="cancelChapterBtn" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Choice Edit Modal -->
+    <div id="choiceModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-umbra border border-neon-violet/30 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-title text-2xl text-neon-violet">Editar Opción</h2>
+                    <button id="closeChoiceModal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                </div>
+
+                <form id="choiceForm" class="space-y-4">
+                    <input type="hidden" id="choiceId">
+                    <input type="hidden" id="choiceChapterId">
+                    
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Texto de la Opción *</label>
+                        <input type="text" id="choiceText" required class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Ej: Entrar al bosque">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Capítulo Destino</label>
+                        <select id="choiceTargetChapter" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                            <option value="">Seleccionar capítulo destino</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Condiciones (una por línea)</label>
+                        <textarea id="choiceConditions" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Condiciones para mostrar esta opción..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Resultados (una por línea)</label>
+                        <textarea id="choiceOutcomes" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Resultados de elegir esta opción..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Orden</label>
+                        <input type="number" id="choiceOrder" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none">
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit" class="flex-1 bg-neon-violet hover:bg-violet-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Guardar Opción
+                        </button>
+                        <button type="button" id="cancelChoiceBtn" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-config.js"></script>
+    <script src="../js/user-menu.js"></script>
+    <script src="../js/adventure-editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador de Embeds - Dark Fantasy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lilita+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Paleta D&D Dark Fantasy */
+            --color-carbon: #1a1a1a;
+            --color-charcoal: #2d2d2d;
+            --color-burnt-wood: #4a3728;
+            --color-old-leather: #5c4a3a;
+            --color-old-gold: #c9a227;
+            --color-blood-red: #8b0000;
+            --color-dark-bg: #0d0d0d;
+            --color-text-light: #e8e8e8;
+            --color-text-dim: #a0a0a0;
+            
+            /* Brawl Stars UI */
+            --border-radius-large: 24px;
+            --border-radius-medium: 16px;
+            --border-radius-small: 12px;
+            --border-thick: 4px solid #1a1a1a;
+            --shadow-heavy: 0 8px 0 #0a0a0a, 0 12px 24px rgba(0,0,0,0.5);
+            --shadow-medium: 0 4px 0 #0a0a0a, 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cinzel', serif;
+            background: var(--color-dark-bg);
+            color: var(--color-text-light);
+            min-height: 100vh;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(201, 162, 39, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Lilita One', cursive;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--color-old-gold);
+            text-shadow: 
+                4px 4px 0 #000,
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                0 0 20px rgba(201, 162, 39, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .config-panel {
+            background: var(--color-charcoal);
+            border: var(--border-thick);
+            border-radius: var(--border-radius-large);
+            padding: 30px;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .config-panel h2 {
+            font-family: 'Lilita One', cursive;
+            font-size: 1.8rem;
+            color: var(--color-old-gold);
+            margin-bottom: 25px;
+            text-shadow: 
+                2px 2px 0 #000,
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--color-text-dim);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            background: var(--color-carbon);
+            border: 3px solid var(--color-burnt-wood);
+            border-radius: var(--border-radius-medium);
+            color: var(--color-text-light);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-old-gold);
+            box-shadow: 0 6px 0 #0a0a0a, 0 8px 16px rgba(201, 162, 39, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input[type="color"] {
+            width: 100%;
+            height: 60px;
+            padding: 10px;
+            background: var(--color-carbon);
+            border: 3px solid var(--color-burnt-wood);
+            border-radius: var(--border-radius-medium);
+            cursor: pointer;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .form-group input[type="color"]:focus {
+            outline: none;
+            border-color: var(--color-old-gold);
+        }
+
+        .preview-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .preview-container {
+            background: var(--color-charcoal);
+            border: var(--border-thick);
+            border-radius: var(--border-radius-large);
+            padding: 30px;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .preview-container h2 {
+            font-family: 'Lilita One', cursive;
+            font-size: 1.8rem;
+            color: var(--color-old-gold);
+            margin-bottom: 25px;
+            text-shadow: 
+                2px 2px 0 #000,
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000;
+        }
+
+        .embed-preview {
+            background: var(--color-carbon);
+            border-radius: var(--border-radius-medium);
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+            border-left: 6px solid var(--color-blood-red);
+            transition: border-left-color 0.3s ease;
+        }
+
+        .embed-preview .embed-header {
+            padding: 20px;
+            border-bottom: 2px solid var(--color-burnt-wood);
+        }
+
+        .embed-preview .embed-title {
+            font-family: 'Lilita One', cursive;
+            font-size: 1.4rem;
+            color: var(--color-text-light);
+            text-shadow: 
+                2px 2px 0 #000,
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000;
+        }
+
+        .embed-preview .embed-description {
+            padding: 20px;
+            color: var(--color-text-light);
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .embed-preview .embed-footer {
+            padding: 15px 20px;
+            background: var(--color-burnt-wood);
+            border-top: 2px solid var(--color-old-leather);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .embed-preview .embed-footer-icon {
+            font-size: 1.2rem;
+        }
+
+        .embed-preview .embed-footer-text {
+            font-size: 0.9rem;
+            color: var(--color-text-dim);
+        }
+
+        .code-console {
+            background: var(--color-charcoal);
+            border: var(--border-thick);
+            border-radius: var(--border-radius-large);
+            padding: 20px;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .code-console h3 {
+            font-family: 'Lilita One', cursive;
+            font-size: 1.4rem;
+            color: var(--color-old-gold);
+            margin-bottom: 15px;
+            text-shadow: 
+                2px 2px 0 #000,
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000;
+        }
+
+        .code-console pre {
+            background: var(--color-dark-bg);
+            border: 2px solid var(--color-burnt-wood);
+            border-radius: var(--border-radius-medium);
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--color-text-dim);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .code-console code {
+            color: var(--color-old-gold);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚔️ Creador de Embeds ⚔️</h1>
+        
+        <div class="two-column">
+            <div class="config-panel">
+                <h2>⚙️ Configuración</h2>
+                
+                <div class="form-group">
+                    <label for="colorPicker">Color de Barra Lateral</label>
+                    <input type="color" id="colorPicker" value="#8b0000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="titleInput">Título del Embed</label>
+                    <input type="text" id="titleInput" placeholder="Escribe el título aquí..." value="Título del Embed">
+                </div>
+                
+                <div class="form-group">
+                    <label for="descriptionInput">Descripción</label>
+                    <textarea id="descriptionInput" placeholder="Escribe la descripción aquí...">Esta es la descripción del embed. Puedes escribir múltiples líneas de texto para dar más detalles sobre el contenido.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="footerInput">Footer (Pie de Página)</label>
+                    <input type="text" id="footerInput" placeholder="Escribe el footer aquí..." value="⚔️ Rol Master">
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <div class="preview-container">
+                    <h2>👁️ Vista Previa</h2>
+                    
+                    <div class="embed-preview" id="embedPreview">
+                        <div class="embed-header">
+                            <div class="embed-title" id="previewTitle">Título del Embed</div>
+                        </div>
+                        <div class="embed-description" id="previewDescription">
+                            Esta es la descripción del embed. Puedes escribir múltiples líneas de texto para dar más detalles sobre el contenido.
+                        </div>
+                        <div class="embed-footer">
+                            <span class="embed-footer-icon">⚔️</span>
+                            <span class="embed-footer-text" id="previewFooter">Rol Master</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-console">
+                    <h3>📜 Código JSON</h3>
+                    <pre><code id="jsonOutput">{
+  "color": 3619136,
+  "title": "Título del Embed",
+  "description": "Esta es la descripción del embed. Puedes escribir múltiples líneas de texto para dar más detalles sobre el contenido.",
+  "footer": {
+    "text": "⚔️ Rol Master"
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const titleInput = document.getElementById('titleInput');
+        const descriptionInput = document.getElementById('descriptionInput');
+        const footerInput = document.getElementById('footerInput');
+        
+        const embedPreview = document.getElementById('embedPreview');
+        const previewTitle = document.getElementById('previewTitle');
+        const previewDescription = document.getElementById('previewDescription');
+        const previewFooter = document.getElementById('previewFooter');
+        const jsonOutput = document.getElementById('jsonOutput');
+
+        function hexToInt(hex) {
+            return parseInt(hex.replace('#', ''), 16);
+        }
+
+        function updatePreview() {
+            const color = colorPicker.value;
+            const title = titleInput.value;
+            const description = descriptionInput.value;
+            const footer = footerInput.value;
+
+            embedPreview.style.borderLeftColor = color;
+            previewTitle.textContent = title || 'Título del Embed';
+            previewDescription.textContent = description || 'Descripción del embed';
+            previewFooter.textContent = footer || '⚔️ Footer';
+
+            const jsonData = {
+                color: hexToInt(color),
+                title: title || 'Título del Embed',
+                description: description || 'Descripción del embed',
+                footer: {
+                    text: footer || '⚔️ Footer'
+                }
+            };
+
+            jsonOutput.textContent = JSON.stringify(jsonData, null, 2);
+        }
+
+        colorPicker.addEventListener('input', updatePreview);
+        titleInput.addEventListener('input', updatePreview);
+        descriptionInput.addEventListener('input', updatePreview);
+        footerInput.addEventListener('input', updatePreview);
+
+        updatePreview();
+    </script>
+</body>
+</html>

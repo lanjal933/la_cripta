@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                        'discord-blue': '#5865F2',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .login-card {
+            background: rgba(19, 16, 28, 0.95);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+        }
+        .discord-button {
+            background: #5865F2;
+            transition: all 0.3s ease;
+        }
+        .discord-button:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(88, 101, 242, 0.4);
+        }
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .availability-day {
+            background: rgba(19, 16, 28, 0.8);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .availability-day.selected {
+            border-color: #3ba55c;
+            background: rgba(59, 165, 92, 0.1);
+        }
+        .time-slot {
+            background: rgba(9, 7, 15, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .time-slot:hover {
+            border-color: #8b5cf6;
+        }
+        .time-slot.selected {
+            background: rgba(59, 165, 92, 0.2);
+            border-color: #3ba55c;
+        }
+    </style>
+</head>
+<body class="font-body text-platinum-white min-h-screen">
+    <div id="flashOverlay" class="flash-overlay"></div>
+
+    <!-- Login Section -->
+    <section class="min-h-screen flex items-center justify-center px-4 py-16" style="background-image: linear-gradient(to bottom, #09070f, #13101c);">
+        <div class="login-card p-8 md:p-12 max-w-md w-full shadow-violet-glow">
+            <div class="text-center mb-8">
+                <h1 class="font-title text-4xl md:text-5xl text-neon-violet mb-4">LA CRIPTA</h1>
+                <p class="text-gray-400 text-lg">Inicia sesión para comenzar tu aventura</p>
+            </div>
+
+            <div id="loginSection">
+                <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
+                    <p class="text-yellow-400 text-sm font-bold mb-2">⚠️ Importante</p>
+                    <p class="text-yellow-200 text-xs">Tu usuario de Discord es obligatorio para que el staff pueda contactarte cuando el bot encuentre un grupo compatible. Sin esta información, no podrás participar en las campañas.</p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm uppercase tracking-wider text-gray-400 mb-2">Usuario de Discord (Obligatorio) *</label>
+                    <input type="text" id="discordUsername" placeholder="Tu usuario exacto de Discord" 
+                        class="w-full bg-dark-umbra border-2 border-neon-violet/30 rounded-lg px-4 py-3 text-platinum-white focus:border-neon-violet focus:outline-none transition-colors">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm uppercase tracking-wider text-gray-400 mb-2">ID de Discord (Opcional)</label>
+                    <input type="text" id="discordId" placeholder="Ej: 123456789012345678" 
+                        class="w-full bg-dark-umbra border-2 border-neon-violet/30 rounded-lg px-4 py-3 text-platinum-white focus:border-neon-violet focus:outline-none transition-colors">
+                    <p class="text-xs text-gray-500 mt-1">Tu ID numérico de Discord (opcional pero recomendado)</p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm uppercase tracking-wider text-gray-400 mb-2">País (Obligatorio) *</label>
+                    <select id="countrySelect" 
+                        class="w-full bg-dark-umbra border-2 border-neon-violet/30 rounded-lg px-4 py-3 text-platinum-white focus:border-neon-violet focus:outline-none transition-colors">
+                        <option value="">Selecciona tu país...</option>
+                        <option value="🇦🇷">🇦🇷 Argentina</option>
+                        <option value="🇲🇽">🇲🇽 México</option>
+                        <option value="🇪🇸">🇪🇸 España</option>
+                        <option value="🇨🇴">🇨🇴 Colombia</option>
+                        <option value="🇨🇱">🇨🇱 Chile</option>
+                        <option value="🇵🇪">🇵🇪 Perú</option>
+                        <option value="🇻🇪">🇻🇪 Venezuela</option>
+                        <option value="🇪🇨">🇪🇨 Ecuador</option>
+                        <option value="🇬🇹">🇬🇹 Guatemala</option>
+                        <option value="🇨🇺">🇨🇺 Cuba</option>
+                        <option value="🇧🇴">🇧🇴 Bolivia</option>
+                        <option value="🇵🇾">🇵🇾 Paraguay</option>
+                        <option value="🇺🇾">🇺🇾 Uruguay</option>
+                        <option value="🇨🇷">🇨🇷 Costa Rica</option>
+                        <option value="🇵🇦">🇵🇦 Panamá</option>
+                        <option value="🇩🇴">🇩🇴 República Dominicana</option>
+                        <option value="🇭🇳">🇭🇳 Honduras</option>
+                        <option value="🇸🇻">🇸🇻 El Salvador</option>
+                        <option value="🇳🇮">🇳🇮 Nicaragua</option>
+                        <option value="🇵🇷">🇵🇷 Puerto Rico</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm uppercase tracking-wider text-gray-400 mb-2">Zona Horaria (Obligatorio) *</label>
+                    <select id="timezoneSelect" 
+                        class="w-full bg-dark-umbra border-2 border-neon-violet/30 rounded-lg px-4 py-3 text-platinum-white focus:border-neon-violet focus:outline-none transition-colors">
+                        <option value="">Selecciona tu zona horaria...</option>
+                        <option value="UTC-5">UTC-5 (México, Colombia, Perú)</option>
+                        <option value="UTC-4">UTC-4 (Chile, Venezuela, Bolivia)</option>
+                        <option value="UTC-3">UTC-3 (Argentina, Uruguay, Brasil)</option>
+                        <option value="UTC-2">UTC-2 (Fernando de Noronha)</option>
+                        <option value="UTC-1">UTC-1 (Azores)</option>
+                        <option value="UTC+0">UTC+0 (Reino Unido, Portugal)</option>
+                        <option value="UTC+1">UTC+1 (España, Francia, Alemania)</option>
+                        <option value="UTC+2">UTC+2 (Grecia, Finlandia)</option>
+                    </select>
+                </div>
+
+                <button id="loginBtn" class="w-full bg-neon-violet hover:bg-violet-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-violet-glow hover:shadow-violet-glow-hover">
+                    🎮 Registrarse
+                </button>
+                <p class="text-center text-gray-500 text-sm mt-4">
+                    Todos los campos marcados con * son obligatorios
+                </p>
+            </div>
+
+            <div id="loadingSection" class="hidden text-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-violet mx-auto mb-4"></div>
+                <p class="text-gray-400">Conectando con Discord...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Weekly Availability Modal -->
+    <div id="availabilityModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center px-4">
+        <div class="login-card p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 class="font-title text-2xl text-neon-violet mb-2 text-center">📅 Tu Disponibilidad Semanal</h2>
+            <p class="text-center text-gray-400 mb-6">Selecciona los días y horarios en los que puedes jugar</p>
+
+            <div id="daysContainer" class="grid grid-cols-1 gap-4 mb-6">
+                <!-- Days will be generated here -->
+            </div>
+
+            <div class="flex gap-4">
+                <button id="skipAvailability" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300">
+                    Saltar por ahora
+                </button>
+                <button id="saveAvailability" class="flex-1 bg-neon-violet hover:bg-violet-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-violet-glow hover:shadow-violet-glow-hover">
+                    Guardar y Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const loginSection = document.getElementById('loginSection');
+        const loadingSection = document.getElementById('loadingSection');
+        const discordUsername = document.getElementById('discordUsername');
+        const discordId = document.getElementById('discordId');
+        const countrySelect = document.getElementById('countrySelect');
+        const timezoneSelect = document.getElementById('timezoneSelect');
+        const loginBtn = document.getElementById('loginBtn');
+        const availabilityModal = document.getElementById('availabilityModal');
+        const skipAvailabilityBtn = document.getElementById('skipAvailability');
+        const saveAvailabilityBtn = document.getElementById('saveAvailability');
+        const daysContainer = document.getElementById('daysContainer');
+
+        // Days of the week
+        const daysOfWeek = [
+            { name: 'Lunes', value: 'monday' },
+            { name: 'Martes', value: 'tuesday' },
+            { name: 'Miércoles', value: 'wednesday' },
+            { name: 'Jueves', value: 'thursday' },
+            { name: 'Viernes', value: 'friday' },
+            { name: 'Sábado', value: 'saturday' },
+            { name: 'Domingo', value: 'sunday' }
+        ];
+
+        // Time slots
+        const timeSlots = [
+            '10:00-12:00', '12:00-14:00', '14:00-16:00', '16:00-18:00',
+            '18:00-20:00', '19:00-21:00', '20:00-22:00', '21:00-23:00', '22:00-00:00'
+        ];
+
+        // User data
+        let userData = {
+            discordId: null,
+            discordNumericId: null,
+            username: null,
+            email: null,
+            avatar: null,
+            country: null,
+            timezone: null,
+            availability: {}
+        };
+
+        // Check if user is already registered
+        async function checkAuth() {
+            const token = localStorage.getItem('cripta_token');
+            if (token) {
+                try {
+                    const response = await fetch('/api/auth/me', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        userData = result.user;
+                        localStorage.setItem('cripta_user', JSON.stringify(userData));
+                        
+                        // Check if user has completed mandatory registration
+                        if (userData.username && userData.country && userData.timezone) {
+                            if (userData.availability && Object.keys(userData.availability).length > 0) {
+                                // User is fully registered and has availability, redirect to matchmaking
+                                window.location.href = 'matchmaking.html';
+                            } else {
+                                // User is registered but needs availability
+                                showAvailabilityModal();
+                            }
+                        } else {
+                            // User data incomplete, show registration form
+                            // Pre-fill existing data
+                            if (userData.username) discordUsername.value = userData.username;
+                            if (userData.discordNumericId) discordId.value = userData.discordNumericId;
+                            if (userData.country) countrySelect.value = userData.country;
+                            if (userData.timezone) timezoneSelect.value = userData.timezone;
+                        }
+                    } else {
+                        // Token invalid, remove it
+                        localStorage.removeItem('cripta_token');
+                        localStorage.removeItem('cripta_user');
+                    }
+                } catch (error) {
+                    console.error('Error checking auth:', error);
+                }
+            }
+        }
+
+        // Mandatory registration
+        loginBtn.addEventListener('click', async () => {
+            const username = discordUsername.value.trim();
+            const numericId = discordId.value.trim();
+            const country = countrySelect.value;
+            const timezone = timezoneSelect.value;
+            
+            // Validate mandatory fields
+            if (!username) {
+                alert('Por favor ingresa tu usuario de Discord (obligatorio)');
+                return;
+            }
+            if (!country) {
+                alert('Por favor selecciona tu país (obligatorio)');
+                return;
+            }
+            if (!timezone) {
+                alert('Por favor selecciona tu zona horaria (obligatorio)');
+                return;
+            }
+
+            try {
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Registrando...';
+
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        discordUsername: username,
+                        discordNumericId: numericId,
+                        country,
+                        timezone
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('cripta_token', result.token);
+                    localStorage.setItem('cripta_user', JSON.stringify(result.user));
+                    userData = result.user;
+                    showAvailabilityModal();
+                } else {
+                    alert(result.error || 'Error en el registro');
+                }
+            } catch (error) {
+                console.error('Error en registro:', error);
+                alert('Error de conexión con el servidor');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '🎮 Registrarse';
+            }
+        });
+
+        // Save user to localStorage
+        function saveUser() {
+            localStorage.setItem('cripta_user', JSON.stringify(userData));
+        }
+
+        // Show availability modal
+        function showAvailabilityModal() {
+            loginSection.classList.add('hidden');
+            loadingSection.classList.add('hidden');
+            availabilityModal.classList.remove('hidden');
+            generateDays();
+        }
+
+        // Generate days for availability selection
+        function generateDays() {
+            daysContainer.innerHTML = daysOfWeek.map(day => `
+                <div class="availability-day p-4" data-day="${day.value}">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-neon-violet">${day.name}</h3>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" class="day-checkbox w-5 h-5 rounded" data-day="${day.value}">
+                            <span class="text-sm text-gray-400">Disponible</span>
+                        </label>
+                    </div>
+                    <div class="time-slots grid grid-cols-3 md:grid-cols-5 gap-2 hidden" data-day-slots="${day.value}">
+                        ${timeSlots.map(slot => `
+                            <button type="button" class="time-slot text-xs py-2 px-3 text-gray-400 hover:text-white" data-time="${slot}">
+                                ${slot}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            // Add event listeners for day checkboxes
+            document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const day = e.target.dataset.day;
+                    const slotsContainer = document.querySelector(`[data-day-slots="${day}"]`);
+                    
+                    if (e.target.checked) {
+                        slotsContainer.classList.remove('hidden');
+                        document.querySelector(`[data-day="${day}"]`).classList.add('selected');
+                    } else {
+                        slotsContainer.classList.add('hidden');
+                        document.querySelector(`[data-day="${day}"]`).classList.remove('selected');
+                        // Deselect all time slots
+                        slotsContainer.querySelectorAll('.time-slot').forEach(slot => {
+                            slot.classList.remove('selected');
+                        });
+                    }
+                });
+            });
+
+            // Add event listeners for time slots
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.addEventListener('click', (e) => {
+                    e.target.classList.toggle('selected');
+                });
+            });
+        }
+
+        // Collect availability data
+        function collectAvailability() {
+            const availability = {};
+            
+            daysOfWeek.forEach(day => {
+                const checkbox = document.querySelector(`.day-checkbox[data-day="${day.value}"]`);
+                if (checkbox && checkbox.checked) {
+                    const selectedSlots = document.querySelectorAll(`[data-day-slots="${day.value}"] .time-slot.selected`);
+                    availability[day.value] = Array.from(selectedSlots).map(slot => slot.dataset.time);
+                }
+            });
+
+            return availability;
+        }
+
+        // Skip availability
+        skipAvailabilityBtn.addEventListener('click', async () => {
+            try {
+                const token = localStorage.getItem('cripta_token');
+                const response = await fetch('/api/auth/availability', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ availability: {} })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    localStorage.setItem('cripta_user', JSON.stringify(result.user));
+                    window.location.href = 'matchmaking.html';
+                } else {
+                    alert('Error guardando disponibilidad');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión');
+            }
+        });
+
+        // Save availability
+        saveAvailabilityBtn.addEventListener('click', async () => {
+            try {
+                const availability = collectAvailability();
+                const token = localStorage.getItem('cripta_token');
+                
+                const response = await fetch('/api/auth/availability', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ availability })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    localStorage.setItem('cripta_user', JSON.stringify(result.user));
+                    window.location.href = 'matchmaking.html';
+                } else {
+                    alert('Error guardando disponibilidad');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión');
+            }
+        });
+
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+</html>

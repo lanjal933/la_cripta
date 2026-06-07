@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body text-platinum-white min-h-screen">
+    <div id="flashOverlay" class="flash-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-umbra/90 backdrop-blur-sm border-b border-neon-violet/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <a href="index.html" class="font-title text-2xl text-neon-violet hover:text-violet-400 transition-colors">LA CRIPTA</a>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="mapa.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet">Mapa</a>
+                    <a href="facciones.html" class="nav-link text-sm uppercase tracking-wider">Facciones</a>
+                    <a href="ciudades.html" class="nav-link text-sm uppercase tracking-wider">Ciudades</a>
+                    <a href="lore.html" class="nav-link text-sm uppercase tracking-wider">Lore</a>
+                    <a href="matchmaking.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet font-bold">Matchmaking</a>
+                    <a href="destino.html" class="nav-link text-sm uppercase tracking-wider">Destino</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- World Section -->
+    <section class="px-4 py-16 max-w-7xl mx-auto pt-32">
+        <h2 class="font-title text-4xl md:text-5xl text-center mb-12 text-neon-violet">MUNDO</h2>
+        <div class="mb-8">
+            <img src="../images/mapa_2v_isla_comienzo.jfif" alt="Mapa del Mundo" class="w-full h-auto rounded-lg hex-border" onerror="this.style.display='none'">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6" id="statsContainer">
+            <!-- Los stat blocks se cargarán dinámicamente aquí -->
+        </div>
+        <div class="hex-border bg-dark-umbra p-8 hover:shadow-violet-glow-hover transition-all duration-300">
+            <h3 class="font-title text-3xl text-center mb-6 text-neon-violet">PLANOS CRIPTICOS</h3>
+            <div class="flex flex-wrap justify-center gap-4 mb-6" id="planeButtons">
+                <!-- Los botones de planos se cargarán dinámicamente aquí -->
+            </div>
+            <div id="planeDescription" class="text-center text-lg min-h-[100px] fade-in">
+                [INSERTA DESCRIPCION DEL PLANO AQUI - Max 2 oraciones]
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let planeCounter = 3;
+        let statCounter = 3;
+        let planeDescriptions = [];
+
+        function updatePlane(index) {
+            const desc = document.getElementById('planeDescription');
+            desc.classList.remove('fade-in');
+            void desc.offsetWidth;
+            desc.innerHTML = planeDescriptions[index] || '[INSERTA DESCRIPCION DEL PLANO AQUI - Max 2 oraciones]';
+            desc.classList.add('fade-in');
+        }
+
+        function enc(d){
+            return btoa(unescape(encodeURIComponent(d)));
+        }
+        function dec(d){
+            return decodeURIComponent(escape(atob(d)));
+        }
+
+        function parseMarkdown(text){
+            let html=text;
+            html=html.replace(/^>\s*(.+)$/gm,'<h3 class="font-title text-xl text-neon-violet mb-2">$1</h3>');
+            html=html.replace(/^# (.+)$/gm,'<h3 class="font-title text-xl text-neon-violet mb-2">$1</h3>');
+            html=html.replace(/^## (.+)$/gm,'<h4 class="font-title text-lg text-neon-violet mb-2">$1</h4>');
+            html=html.replace(/^-\s*(.+)$/gm,'<li class="text-gray-300 ml-4">$1</li>');
+            html=html.replace(/\*\*(.+?)\*\*/g,'<strong class="text-white font-bold">$1</strong>');
+            html=html.replace(/\*(.+?)\*/g,'<em class="text-gray-300 italic">$1</em>');
+            html=html.replace(/`([^`]+)`/g,'<code class="bg-gray-800 text-neon-violet px-2 py-1 rounded text-sm">$1</code>');
+            html=html.replace(/#([0-9a-fA-F]{6})(.+?)(?=#|$)/g,'<span style="color:#$1">$2</span>');
+            html=html.replace(/\n/g,'<br>');
+            return html;
+        }
+
+        function loadMapSections() {
+            const statsContainer = document.getElementById('statsContainer');
+            const planeButtons = document.getElementById('planeButtons');
+            statsContainer.innerHTML = '';
+            planeButtons.innerHTML = '';
+
+            statCounter = parseInt(localStorage.getItem('admin_stat_counter')) || 3;
+            planeCounter = parseInt(localStorage.getItem('admin_plane_counter')) || 3;
+
+            // Cargar stat blocks
+            for (let i = 0; i < statCounter; i++) {
+                const sectionId = `stat${i}`;
+                const savedName = localStorage.getItem(`admin_${sectionId}_name`) || `Stat Block ${i + 1}`;
+                const savedContent = localStorage.getItem(`admin_${sectionId}`);
+
+                const statHTML = `
+                    <div id="stat${i}" class="hex-border bg-dark-umbra p-6 text-center hover:shadow-violet-glow-hover transition-all duration-300">
+                        <h3 class="font-title text-2xl text-neon-violet mb-2">${savedName}</h3>
+                        ${savedContent ? `<p class="text-3xl font-bold">${parseMarkdown(dec(savedContent))}</p>` : '<p class="text-3xl font-bold">[VALUE]</p>'}
+                    </div>
+                `;
+                statsContainer.innerHTML += statHTML;
+            }
+
+            // Cargar planos
+            planeDescriptions = [];
+            for (let i = 0; i < planeCounter; i++) {
+                const sectionId = `plane${i}`;
+                const savedName = localStorage.getItem(`admin_${sectionId}_name`) || `Plano ${i + 1}`;
+                const savedContent = localStorage.getItem(`admin_${sectionId}`);
+
+                planeDescriptions.push(savedContent ? parseMarkdown(dec(savedContent)) : '[INSERTA DESCRIPCION DEL PLANO AQUI - Max 2 oraciones]');
+
+                const buttonHTML = `
+                    <button onclick="updatePlane(${i})" class="plane-btn bg-neon-violet/20 hover:bg-neon-violet/40 border border-neon-violet px-6 py-3 rounded transition-all duration-300">${savedName.toUpperCase()}</button>
+                `;
+                planeButtons.innerHTML += buttonHTML;
+            }
+        }
+
+        const K='benjamarcepau9';
+
+        document.addEventListener('keydown',function(e){
+            if(e.ctrlKey&&e.altKey&&e.key==='p'){
+                window.location.href='admin.html';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded',function(){
+            loadMapSections();
+        });
+    </script>
+    <script src="../js/user-menu.js"></script>
+</body>
+</html>

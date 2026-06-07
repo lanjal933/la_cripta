@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Aventura - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body text-platinum-white min-h-screen bg-shadow-graphite">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-umbra/90 backdrop-blur-sm border-b border-neon-violet/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <a href="index.html" class="font-title text-2xl text-neon-violet hover:text-violet-400 transition-colors">LA CRIPTA</a>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="mapa.html" class="nav-link text-sm uppercase tracking-wider">Mapa</a>
+                    <a href="facciones.html" class="nav-link text-sm uppercase tracking-wider">Facciones</a>
+                    <a href="ciudades.html" class="nav-link text-sm uppercase tracking-wider">Ciudades</a>
+                    <a href="lore.html" class="nav-link text-sm uppercase tracking-wider">Lore</a>
+                    <a href="aventuras.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet font-bold">Aventuras</a>
+                    <a href="matchmaking.html" class="nav-link text-sm uppercase tracking-wider">Matchmaking</a>
+                    <a href="destino.html" class="nav-link text-sm uppercase tracking-wider">Destino</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-violet mx-auto"></div>
+                <p class="text-gray-400 mt-4">Cargando aventura...</p>
+            </div>
+
+            <!-- Adventure Content -->
+            <div id="adventureContent" class="hidden">
+                <!-- Header -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <a href="aventuras.html" class="text-gray-400 hover:text-white transition-colors">← Volver a Aventuras</a>
+                    </div>
+                    <div id="officialBadge" class="hidden inline-block bg-neon-violet text-white text-sm px-3 py-1 rounded mb-4">OFICIAL</div>
+                    <h1 id="adventureTitle" class="font-title text-4xl md:text-5xl text-neon-violet mb-4"></h1>
+                    <p id="adventureDescription" class="text-gray-400 text-lg mb-6"></p>
+                    
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <span id="adventureType" class="bg-gray-800 text-gray-300 text-sm px-3 py-1 rounded"></span>
+                        <span id="adventureLevel" class="bg-gray-800 text-gray-300 text-sm px-3 py-1 rounded"></span>
+                        <span id="adventurePlayers" class="bg-gray-800 text-gray-300 text-sm px-3 py-1 rounded"></span>
+                        <span id="adventureCategory" class="bg-gray-800 text-gray-300 text-sm px-3 py-1 rounded"></span>
+                    </div>
+
+                    <div class="flex items-center gap-6 text-sm text-gray-400 mb-6">
+                        <div class="flex items-center gap-2">
+                            <span id="creatorAvatar" class="w-8 h-8 rounded-full bg-gray-700"></span>
+                            <span id="creatorName"></span>
+                        </div>
+                        <span id="creationDate"></span>
+                        <span id="playerCount">👥 0 jugadores</span>
+                        <span id="completionCount">✅ 0 completados</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 mb-6">
+                        <div id="ratingStars" class="flex"></div>
+                        <span id="ratingCount" class="text-gray-400 text-sm"></span>
+                    </div>
+
+                    <!-- Tags -->
+                    <div id="tagsContainer" class="flex flex-wrap gap-2 mb-6"></div>
+
+                    <!-- Rewards -->
+                    <div id="rewardsContainer" class="hidden mb-6">
+                        <h3 class="font-title text-lg text-neon-violet mb-2">Recompensas</h3>
+                        <div id="rewardsList" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div id="actionButtons" class="flex gap-4 mb-8">
+                    <button id="startAdventureBtn" class="flex-1 bg-neon-violet hover:bg-violet-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 shadow-violet-glow">
+                        Comenzar Aventura
+                    </button>
+                    <button id="rateAdventureBtn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                        ⭐ Valorar
+                    </button>
+                </div>
+
+                <!-- Chapter Content -->
+                <div id="chapterContent" class="hidden">
+                    <div class="bg-dark-umbra/90 border border-neon-violet/30 rounded-lg p-6 mb-6">
+                        <h2 id="chapterTitle" class="font-title text-3xl text-neon-violet mb-4"></h2>
+                        
+                        <div id="chapterImages" class="mb-6"></div>
+                        
+                        <div id="chapterNarrative" class="text-gray-300 text-lg leading-relaxed mb-6 whitespace-pre-line"></div>
+                        
+                        <div id="chapterRewards" class="hidden mb-6">
+                            <h3 class="font-title text-lg text-neon-violet mb-2">Recompensas de este capítulo</h3>
+                            <div id="chapterRewardsList" class="flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <div id="choicesContainer" class="space-y-3"></div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="bg-dark-umbra/90 border border-gray-700 rounded-lg p-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">Progreso</span>
+                            <span id="progressText" class="text-neon-violet"></span>
+                        </div>
+                        <div class="mt-2 bg-gray-800 rounded-full h-2">
+                            <div id="progressBar" class="bg-neon-violet h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ending Screen -->
+                <div id="endingScreen" class="hidden bg-dark-umbra/90 border border-neon-violet/30 rounded-lg p-8 text-center">
+                    <div class="text-6xl mb-4">🏁</div>
+                    <h2 id="endingTitle" class="font-title text-4xl text-neon-violet mb-4"></h2>
+                    <p id="endingType" class="text-gray-400 text-lg mb-6"></p>
+                    <div class="flex gap-4 justify-center">
+                        <button id="restartBtn" class="bg-neon-violet hover:bg-violet-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Reiniciar Aventura
+                        </button>
+                        <button id="rateAfterEndingBtn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            ⭐ Valorar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ratings Section -->
+                <div id="ratingsSection" class="mt-8">
+                    <h2 class="font-title text-2xl text-neon-violet mb-4">Valoraciones</h2>
+                    <div id="ratingsList" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-umbra border border-neon-violet/30 rounded-lg max-w-md w-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-title text-2xl text-neon-violet">Valorar Aventura</h2>
+                    <button id="closeRatingModal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                </div>
+
+                <form id="ratingForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Tu valoración</label>
+                        <div id="starRating" class="flex gap-2 text-3xl cursor-pointer">
+                            <span data-rating="1" class="star hover:text-yellow-400">☆</span>
+                            <span data-rating="2" class="star hover:text-yellow-400">☆</span>
+                            <span data-rating="3" class="star hover:text-yellow-400">☆</span>
+                            <span data-rating="4" class="star hover:text-yellow-400">☆</span>
+                            <span data-rating="5" class="star hover:text-yellow-400">☆</span>
+                        </div>
+                        <input type="hidden" id="ratingValue" value="0">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Tu reseña (opcional)</label>
+                        <textarea id="ratingReview" rows="4" class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded focus:border-neon-violet focus:outline-none" placeholder="Comparte tu experiencia..."></textarea>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit" class="flex-1 bg-neon-violet hover:bg-violet-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Enviar Valoración
+                        </button>
+                        <button type="button" id="cancelRatingBtn" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api-config.js"></script>
+    <script src="../js/user-menu.js"></script>
+    <script src="../js/adventure-view.js"></script>
+</body>
+</html>

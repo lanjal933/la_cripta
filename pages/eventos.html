@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Evento - Panel Admin</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .event-creator-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 24px;
+            background: #36393f;
+            border-radius: 8px;
+        }
+
+        .event-creator-header {
+            margin-bottom: 24px;
+        }
+
+        .event-creator-header h2 {
+            color: #ffffff;
+            margin: 0 0 8px 0;
+            font-size: 24px;
+        }
+
+        .event-creator-header p {
+            color: #b9bbbe;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .event-textarea {
+            width: 100%;
+            min-height: 200px;
+            background: #40444b;
+            border: 1px solid #202225;
+            border-radius: 8px;
+            padding: 16px;
+            color: #dcddde;
+            font-size: 16px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .event-textarea:focus {
+            border-color: #5865F2;
+        }
+
+        .event-textarea::placeholder {
+            color: #72767d;
+        }
+
+        .syntax-help {
+            margin-top: 12px;
+            padding: 12px;
+            background: #2f3136;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .syntax-help h4 {
+            color: #ffffff;
+            margin: 0 0 8px 0;
+            font-size: 14px;
+        }
+
+        .syntax-help ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #b9bbbe;
+        }
+
+        .syntax-help li {
+            margin-bottom: 4px;
+        }
+
+        .syntax-help code {
+            background: #202225;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #5865F2;
+            font-family: monospace;
+        }
+
+        .preview-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #202225;
+        }
+
+        .preview-section h3 {
+            color: #ffffff;
+            margin: 0 0 16px 0;
+            font-size: 18px;
+        }
+
+        .create-button {
+            margin-top: 24px;
+            padding: 12px 24px;
+            background: #5865F2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .create-button:hover {
+            background: #4752c4;
+        }
+
+        .create-button:active {
+            background: #3c45a5;
+        }
+    </style>
+</head>
+<body>
+    <div class="event-creator-container">
+        <div class="event-creator-header">
+            <h2>Crear Nuevo Evento</h2>
+            <p>Escribe tu evento usando sintaxis estilo Discord. El sistema lo parseará automáticamente.</p>
+        </div>
+
+        <textarea 
+            id="eventInput" 
+            class="event-textarea"
+            placeholder="Escribe tu evento aquí..."
+        ></textarea>
+
+        <div class="syntax-help">
+            <h4>Sintaxis Markdown Disponible:</h4>
+            <ul>
+                <li><code>> Título</code> - Título del evento (header)</li>
+                <li><code>- Fecha: YYYY-MM-DD</code> - Fecha del evento</li>
+                <li><code>- Hora: HH:MM</code> - Hora del evento</li>
+                <li><code>- Tipo: evento</code> - Tipo (evento, reunion, anuncio, recordatorio, tarea)</li>
+                <li><code>- Descripción: texto</code> - Descripción del evento</li>
+                <li><code>- Ubicación: texto</code> - Ubicación del evento</li>
+                <li><code>- Prioridad: alta</code> - Prioridad (alta, media, baja)</li>
+                <li><code>`etiqueta`</code> - Datos técnicos o etiquetas</li>
+            </ul>
+        </div>
+
+        <div class="preview-section">
+            <h3>Preview en Tiempo Real</h3>
+            <div id="eventPreview">
+                <p style="color: #72767d;">Escribe para ver el preview...</p>
+            </div>
+        </div>
+
+        <button id="createEventBtn" class="create-button">Crear Evento</button>
+    </div>
+
+    <script src="../js/event-parser.js"></script>
+    <script>
+        // Inicializar el sistema de eventos
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventSystem = new EventSystem();
+            eventSystem.init('eventInput', 'eventPreview', 'createEventBtn');
+        });
+    </script>
+</body>
+</html>

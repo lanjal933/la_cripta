@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destino - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body text-platinum-white min-h-screen">
+    <div id="flashOverlay" class="flash-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-umbra/90 backdrop-blur-sm border-b border-neon-violet/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <a href="index.html" class="font-title text-2xl text-neon-violet hover:text-violet-400 transition-colors">LA CRIPTA</a>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="mapa.html" class="nav-link text-sm uppercase tracking-wider">Mapa</a>
+                    <a href="facciones.html" class="nav-link text-sm uppercase tracking-wider">Facciones</a>
+                    <a href="ciudades.html" class="nav-link text-sm uppercase tracking-wider">Ciudades</a>
+                    <a href="lore.html" class="nav-link text-sm uppercase tracking-wider">Lore</a>
+                    <a href="matchmaking.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet font-bold">Matchmaking</a>
+                    <a href="destino.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet">Destino</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Destiny Key Simulator -->
+    <section class="px-4 py-16 max-w-2xl mx-auto pt-32 mb-16">
+        <h2 class="font-title text-4xl md:text-5xl text-center mb-12 text-neon-violet">LLAVE DEL DESTINO</h2>
+        <div class="hex-border bg-dark-umbra p-8">
+            <div class="mb-6">
+                <label class="block text-sm text-gray-400 mb-2">ATRIBUTO OSCURO</label>
+                <select id="attributeSelect" class="w-full bg-shadow-graphite border border-neon-violet/50 rounded-lg p-3 text-white focus:outline-none focus:border-neon-violet">
+                    <option value="">[SELECCIONA ATRIBUTO]</option>
+                    <option value="shadow">Sombra</option>
+                    <option value="blood">Sangre</option>
+                    <option value="void">Vacío</option>
+                    <option value="decay">Decadencia</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm text-gray-400 mb-2">TIPO DE DADO</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="dice" value="d20" checked class="mr-2 accent-neon-violet">
+                        <span>d20</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="dice" value="d12" class="mr-2 accent-neon-violet">
+                        <span>d12</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="dice" value="d10" class="mr-2 accent-neon-violet">
+                        <span>d10</span>
+                    </label>
+                </div>
+            </div>
+            <button onclick="turnKey()" class="w-full bg-neon-violet hover:bg-violet-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 mb-6">
+                GIRAR LA LLAVE
+            </button>
+            <div id="resultDisplay" class="text-center min-h-[80px]">
+                <p class="text-gray-400">[EL RESULTADO APARECERA AQUI]</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function triggerFlash() {
+            const overlay = document.getElementById('flashOverlay');
+            overlay.classList.add('flash-active');
+            setTimeout(() => {
+                overlay.classList.remove('flash-active');
+            }, 300);
+        }
+
+        function turnKey() {
+            const diceType = document.querySelector('input[name="dice"]:checked').value;
+            const maxRoll = parseInt(diceType.replace('d', ''));
+            const roll = Math.floor(Math.random() * maxRoll) + 1;
+            const resultDisplay = document.getElementById('resultDisplay');
+            
+            resultDisplay.innerHTML = `<div class="dice-roll text-4xl font-bold text-neon-violet mb-2">${roll}</div>`;
+            
+            setTimeout(() => {
+                const success = roll >= Math.ceil(maxRoll / 2);
+                resultDisplay.innerHTML += `<p class="text-lg">${success ? '[TEXTO DE NOTIFICACION DE EXITO]' : '[TEXTO DE NOTIFICACION DE FALLO]'}</p>`;
+                triggerFlash();
+            }, 500);
+        }
+
+        const K='benjamarcepau9';
+
+        document.addEventListener('keydown',function(e){
+            if(e.ctrlKey&&e.altKey&&e.key==='p'){
+                window.location.href='admin.html';
+            }
+        });
+    </script>
+    <script src="../js/user-menu.js"></script>
+</body>
+</html>

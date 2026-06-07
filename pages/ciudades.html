@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciudades - La Cripta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'shadow-graphite': '#09070f',
+                        'dark-umbra': '#13101c',
+                        'neon-violet': '#8b5cf6',
+                        'platinum-white': '#f8fafc',
+                    },
+                    fontFamily: {
+                        'title': ['"Cinzel Decorative"', 'serif'],
+                        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'violet-glow': '0 0 20px rgba(139, 92, 246, 0.5)',
+                        'violet-glow-hover': '0 0 30px rgba(139, 92, 246, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body text-platinum-white min-h-screen">
+    <div id="flashOverlay" class="flash-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-dark-umbra/90 backdrop-blur-sm border-b border-neon-violet/30 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <a href="index.html" class="font-title text-2xl text-neon-violet hover:text-violet-400 transition-colors">LA CRIPTA</a>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="mapa.html" class="nav-link text-sm uppercase tracking-wider">Mapa</a>
+                    <a href="facciones.html" class="nav-link text-sm uppercase tracking-wider">Facciones</a>
+                    <a href="ciudades.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet">Ciudades</a>
+                    <a href="lore.html" class="nav-link text-sm uppercase tracking-wider">Lore</a>
+                    <a href="matchmaking.html" class="nav-link text-sm uppercase tracking-wider text-neon-violet font-bold">Matchmaking</a>
+                    <a href="destino.html" class="nav-link text-sm uppercase tracking-wider">Destino</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cities Section -->
+    <section class="px-4 py-16 max-w-7xl mx-auto pt-32">
+        <h2 class="font-title text-4xl md:text-5xl text-center mb-12 text-neon-violet">CIUDADES</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="citiesContainer">
+            <!-- Las ciudades se cargarán dinámicamente aquí -->
+        </div>
+    </section>
+
+    <script>
+        let cityCounter = 3;
+
+        function enc(d){
+            return btoa(unescape(encodeURIComponent(d)));
+        }
+        function dec(d){
+            return decodeURIComponent(escape(atob(d)));
+        }
+
+        function parseMarkdown(text){
+            let html=text;
+            html=html.replace(/^>\s*(.+)$/gm,'<h3 class="font-title text-xl text-neon-violet mb-2">$1</h3>');
+            html=html.replace(/^# (.+)$/gm,'<h3 class="font-title text-xl text-neon-violet mb-2">$1</h3>');
+            html=html.replace(/^## (.+)$/gm,'<h4 class="font-title text-lg text-neon-violet mb-2">$1</h4>');
+            html=html.replace(/^-\s*(.+)$/gm,'<li class="text-gray-300 ml-4">$1</li>');
+            html=html.replace(/\*\*(.+?)\*\*/g,'<strong class="text-white font-bold">$1</strong>');
+            html=html.replace(/\*(.+?)\*/g,'<em class="text-gray-300 italic">$1</em>');
+            html=html.replace(/`([^`]+)`/g,'<code class="bg-gray-800 text-neon-violet px-2 py-1 rounded text-sm">$1</code>');
+            html=html.replace(/#([0-9a-fA-F]{6})(.+?)(?=#|$)/g,'<span style="color:#$1">$2</span>');
+            html=html.replace(/\n/g,'<br>');
+            return html;
+        }
+
+        function loadCitySections() {
+            const container = document.getElementById('citiesContainer');
+            container.innerHTML = '';
+
+            cityCounter = parseInt(localStorage.getItem('admin_city_counter')) || 3;
+
+            for (let i = 0; i < cityCounter; i++) {
+                const sectionId = `city${i}`;
+                const savedName = localStorage.getItem(`admin_${sectionId}_name`) || `Ciudad ${i + 1}`;
+                const savedContent = localStorage.getItem(`admin_${sectionId}`);
+
+                const cityHTML = `
+                    <div id="city${i}" class="hex-border bg-dark-umbra p-6 hover:shadow-violet-glow-hover transition-all duration-300">
+                        <h3 class="font-title text-2xl text-neon-violet mb-4">${savedName}</h3>
+                        <div class="mb-3">
+                            <span class="text-sm text-gray-400">Peligro:</span>
+                            <div class="status-bar h-3 rounded mt-1" style="--fill: ${50 + (i * 10)}%"></div>
+                        </div>
+                        <div class="mb-3">
+                            <span class="text-sm text-gray-400">Magia:</span>
+                            <div class="status-bar h-3 rounded mt-1" style="--fill: ${40 + (i * 15)}%"></div>
+                        </div>
+                        ${savedContent ? `<p class="text-sm mt-4">${parseMarkdown(dec(savedContent))}</p>` : '<p class="text-sm mt-4">[AGREGA DESCRIPCION DE CIUDAD AQUI]</p>'}
+                    </div>
+                `;
+                container.innerHTML += cityHTML;
+            }
+        }
+
+        const K='benjamarcepau9';
+
+        document.addEventListener('keydown',function(e){
+            if(e.ctrlKey&&e.altKey&&e.key==='p'){
+                window.location.href='admin.html';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded',function(){
+            loadCitySections();
+        });
+    </script>
+    <script src="../js/user-menu.js"></script>
+</body>
+</html>
